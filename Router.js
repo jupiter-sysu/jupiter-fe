@@ -4,7 +4,16 @@ import { Platform, StyleSheet, View, StatusBar } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
-import Error from './src/app-config/containers';
+// import containers
+import Error from './src/containers/Error/Error';
+//======================Sprint 1======================
+import Welcome from './src/containers/Welcome/Welcome';
+import Login from './src/containers/Login/Login';
+import Signup from './src/containers/Signup/Signup';
+//======================Test======================
+import Test from './src/containers/Test';
+
+
 import { THEME_PRIMARY_COLOR } from './src/common-style/theme';
 
 let TABSTATE = '首页';
@@ -137,10 +146,71 @@ const Main = StackNavigator({
       },
     }),
   },
+  welcome: {
+    screen: Welcome,
+    navigationOptions: () => ({
+      title: '欢迎',
+      headerTintColor: 'white',
+      headerStyle: {
+        display: 'none',
+        backgroundColor: THEME_PRIMARY_COLOR,
+        borderBottomWidth: 0,
+        elevation: 0,
+      },
+      headerBackTitle: null,
+      headerTitleStyle: {
+        fontSize: 24,
+      },
+    }),
+  },
+  signup: {
+    screen: Signup,
+    navigationOptions: () => ({
+      title: '注册',
+      headerTintColor: 'white',
+      headerStyle: {
+        display: 'none',
+      },
+      headerBackTitle: null,
+      headerTitleStyle: {
+        fontSize: 24,
+      },
+    }),
+  },
+  login: {
+    screen: Login,
+    navigationOptions: () => ({
+      title: '登录',
+      headerTintColor: 'white',
+      headerStyle: {
+        display: 'none',
+
+      },
+      headerBackTitle: null,
+      headerTitleStyle: {
+        fontSize: 24,
+      },
+    }),
+  },
+  test: {
+    screen: Test,
+    navigationOptions: () => ({
+      title: '登录',
+      headerTintColor: 'white',
+      headerStyle: {
+        display: 'none',
+
+      },
+      headerBackTitle: null,
+      headerTitleStyle: {
+        fontSize: 24,
+      },
+    }),
+  },
 }, {
   headerMode: 'float',
   mode: 'card',
-
+  initialRouteName: 'welcome',
   transitionConfig: () => (Platform.OS === 'ios' ? {} : {
     screenInterpolator: (sceneProps) => {
       const { layout, position, scene } = sceneProps;

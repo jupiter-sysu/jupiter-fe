@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Text, View, Image, StyleSheet } from 'react-native';
 
 
-export default function Error() {
+function Error() {
   return (
     <View style={styles.container}>
       <Image source={require('./assets/404.png')} />
-      <Text style={styles.text}>暂未开发</Text>
+      <Text style={styles.text}>你好</Text>
     </View>
   );
 }
+
+export default Error;
 
 const styles = StyleSheet.create({
   container: {
