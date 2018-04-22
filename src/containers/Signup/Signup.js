@@ -11,7 +11,7 @@ import { fetch } from '../../utils/fetch';
 import MCSpinner from '../../component/Feedback/MCSpinner';
 
 const PIXEL_RATE = Dimensions.get('screen').width / 375;
-const PIXEL_RATE_Y = Dimensions.get('screen').width / 667;
+const PIXEL_RATE_Y = Dimensions.get('screen').height / 667;
 
 @inject(['user']) // 注入store中的user到本组件的props里面
 @observer // 监听当前组件
