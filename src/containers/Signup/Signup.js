@@ -7,7 +7,7 @@ import MCButton from '../../component/DataEntry/MCButton';
 import { THEME_PRIMARY_COLOR } from './../../common-style/theme';
 import Form, {form} from './component/Signup-form';
 import { Toast } from 'antd-mobile';
-import { fetch } from '../../utils/fetch';
+import myFetch from '../../utils/fetch';
 import MCSpinner from '../../component/Feedback/MCSpinner';
 
 const PIXEL_RATE = Dimensions.get('screen').width / 375;
@@ -18,40 +18,25 @@ const PIXEL_RATE_Y = Dimensions.get('screen').height / 667;
 class Signup extends Component {
     constructor(props) {
         super(props);
-        form.$hooks.onSuccess = async(form) => {
-            if (this.state.networkType === 'none' || this.state.networkType === 'NONE') {
-                Toast.info('暂无网络，请检查您的网络设置', 2);
-                // Toast.offline('\n暂无网络，请检查您的网络设置', 2);
+        form.$hooks.onSuccess = async (form) => {
+            let result = await this.props.user.getConfirmCode(form.$('phone').value, form.$('password').value);
+            console.log(result);
+            if (result) {
+                this.props.navigation.navigate('signupidcode');
             } else {
-                const postData = {
-                    phone: Number(form.$('phone').value),
-                    password: form.$('password').value,
-                }
-                // this.setState({
-                //     modalVisible: true,
-                // })
-                // 请求数据
-                // let data = await fetch('/login', 'POST', postData);
-
-                // 如果已经注册了
-                // if (true) {
-                //     // 提示手机已经注册
-                //     Alert.alert(
-                //         '该手机号码已注册，\n请直接登录',
-                //         '',
-                //         [
-                //             { text: '去登录', onPress: () => this.props.navigation.navigate('login') },
-                //             { text: '取消', onPress: () => {} },
-                //         ],
-                //         { cancelable: false }
-                //     )
-                // } else {
-                //     this.props.user.setUserPhone(Number(form.$('phone').value));
-                //     // 跳转去验证码页面
-
-                // }
-
+                setTimeout(() => {
+                    Alert.alert(
+                        '该手机号码已注册，\n请直接登录',
+                        '',
+                        [
+                            { text: '去登录', onPress: () => this.props.navigation.navigate('login') },
+                            { text: '取消', onPress: () => { } },
+                        ],
+                        { cancelable: false }
+                    )
+                }, 0)
             }
+            
         }
         form.$hooks.onError = (form) => {
             // toast提示信息，感觉有点重复，不需要了
@@ -65,11 +50,6 @@ class Signup extends Component {
             //     continue;
             // }       
         }
-
-        this.state={
-            networkType: true,
-            modalVisible: false,
-        }
     }
 
     render() {
@@ -79,9 +59,9 @@ class Signup extends Component {
                 source={require('./assets/White.png')}
             >
                 <StatusBar barStyle="dark-content"  />
-                <MCSpinner isVisible={this.state.modalVisible} />
+                <MCSpinner isVisible={this.props.user.modalVisible} />
                 <MCHeader
-                    handler={()=>this.props.navigation.goBack()}
+                    handler={() => { form.clear(); this.props.navigation.goBack()}}
                 >手机号注册</MCHeader>
 
                 <Form form={form} /> 
@@ -92,9 +72,9 @@ class Signup extends Component {
     componentDidMount() {
         NetInfo.addEventListener('connectionChange',
             (networkType) => {
-                this.setState({ networkType: networkType.type })
+                this.props.user.setNetworkType(networkType.type);
             }
-        )
+        );
     }
 }
 

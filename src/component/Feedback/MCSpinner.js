@@ -17,8 +17,10 @@ function MCHeader(props) {
             transparent={true}
             visible={isVisible}
         >
-            <View style={styles.modalContaienr}>
-                <Bars size={30} color={THEME_PRIMARY_COLOR} />
+            <View style={styles.modalContainer}>
+                <View style={styles.modalSmallContainer}>
+                    <Bars size={18} color={THEME_PRIMARY_COLOR} />
+                </View>
             </View>
         </Modal>
 
@@ -28,11 +30,21 @@ function MCHeader(props) {
 export default MCHeader;
 
 const styles = StyleSheet.create({
-    modalContaienr: {
+    modalContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    modalSmallContainer: {
+        width: 90,
+        height: 90,
+        borderRadius: 45,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#FFF',
     }
+    
 
 });
 

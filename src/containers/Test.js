@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { connect } from "mobx-react";
 import { observer, inject } from "mobx-react";
-import Form, {form} from './Form';
 
 // 作为测试使用的，暂时不用管
 
@@ -17,7 +16,7 @@ class HomeScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Form form={form} />
+        <Text>大家好</Text>
       </View>
     );
   }

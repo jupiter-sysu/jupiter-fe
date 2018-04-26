@@ -10,6 +10,7 @@ import Error from './src/containers/Error/Error';
 import Welcome from './src/containers/Welcome/Welcome';
 import Login from './src/containers/Login/Login';
 import Signup from './src/containers/Signup/Signup';
+import SignupIDCode from './src/containers/Signup/Signup-IDCode';
 //======================Test======================
 import Test from './src/containers/Test';
 
@@ -181,6 +182,21 @@ const Main = StackNavigator({
     screen: Login,
     navigationOptions: () => ({
       title: '登录',
+      headerTintColor: 'white',
+      headerStyle: {
+        display: 'none',
+
+      },
+      headerBackTitle: null,
+      headerTitleStyle: {
+        fontSize: 24,
+      },
+    }),
+  },
+  signupidcode: {
+    screen: SignupIDCode,
+    navigationOptions: () => ({
+      title: '验证码',
       headerTintColor: 'white',
       headerStyle: {
         display: 'none',

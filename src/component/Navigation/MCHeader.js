@@ -11,7 +11,7 @@ const PIXEL_RATE_Y = Dimensions.get('screen').height / 667;
 
 
 function MCHeader(props) {
-    const { handler, children="测试" } = props;
+    const { handler, children="" } = props;
     return (
         <View style={styles.container}>
             <TouchableOpacity
@@ -20,7 +20,7 @@ function MCHeader(props) {
             >
                 <Ionicons name='ios-arrow-back' size={30 * PIXEL_RATE} style={{marginTop: 2, color: 'black', backgroundColor: 'rgba(0,0,0,0)'}} />  
             </TouchableOpacity>
-            <Text style={{ color: 'black', fontWeight: 'normal', fontSize: 20 * PIXEL_RATE, textAlign: 'center', lineHeight: 32 * PIXEL_RATE }}>{children}</Text>
+            <Text style={{ color: 'black', backgroundColor: 'rgba(1,1,1,0)',  fontWeight: 'normal', fontSize: 20 * PIXEL_RATE, textAlign: 'center', lineHeight: 32 * PIXEL_RATE }}>{children}</Text>
         </View>
            
     )
