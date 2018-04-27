@@ -20,10 +20,9 @@ class Signup extends Component {
         super(props);
         form.$hooks.onSuccess = async (form) => {
             let result = await this.props.user.getConfirmCode(form.$('phone').value, form.$('password').value);
-            console.log(result);
-            if (result) {
+            if (result == 200) {
                 this.props.navigation.navigate('signupidcode');
-            } else {
+            } else if (result == 401) {
                 setTimeout(() => {
                     Alert.alert(
                         '该手机号码已注册，\n请直接登录',

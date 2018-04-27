@@ -26,9 +26,9 @@ class SignupIDCode extends Component {
         if (this.props.user.confirmCode.length === 4) {
             console.log('galo');
             let result = await this.props.user.validateConfirmCode();
-            if (result) {
+            if (result == 200) {
                 this.reset();
-            } else {
+            } else if (result == 401) {
                 Toast.info('验证码错误', 2);
             }
         }

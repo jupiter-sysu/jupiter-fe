@@ -28,7 +28,7 @@ class user {
     }
     @action.bound
     startCountdown() {
-        this.countdown = 10;
+        this.countdown = 90;
         const timer = setInterval(() => {
             if (this.countdown >= 1) {
                 this.countdown = this.countdown - 1; 
@@ -43,6 +43,7 @@ class user {
         if (this.networkType === 'none' || this.networkType === 'NONE') {
             Toast.info('暂无网络，请检查您的网络设置', 2);
             // Toast.offline('\n暂无网络，请检查您的网络设置', 2);
+            return 500;
         } else {
             const postData = {
                 phone_num: Number(phone),
@@ -60,14 +61,13 @@ class user {
             // 如果已经注册了
             if (data.error_code === 401) {
                 // 提示手机已经注册,使用setTimeout是为了modal关闭后马上执行alert，否则会有冲突
-                return false;
+                return 401;
             } else if (data.error_code === 200) {
                 this.setUserPhone(Number(phone));
                 this.setUserPassword(pass);
-                return true;
+                return 200;
 
             }
-            return false;
         }
     }
 
@@ -76,6 +76,7 @@ class user {
         if (this.networkType === 'none' || this.networkType === 'NONE') {
             Toast.info('暂无网络，请检查您的网络设置', 2);
             // Toast.offline('\n暂无网络，请检查您的网络设置', 2);
+            return 500;
         } else {
             const postData = {
                 phone_num: this.userphone,
@@ -93,18 +94,16 @@ class user {
 
             // 如果已经注册了
             if (data.error_code === 401) {
-                console.log('401')
                 // 提示手机已经注册,使用setTimeout是为了modal关闭后马上执行alert，否则会有冲突
                 setTimeout(() => {
-                    return false;
+                    return 401;
                 }, 0);
             } else if (data.error_code === 200) {
                 console.log('200')
                 this.isLogin = true;
-                return true;
+                return 200;
 
             }
-            return false;
         }
     }
 
