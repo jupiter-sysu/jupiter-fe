@@ -11,6 +11,9 @@ import Welcome from './src/containers/Welcome/Welcome';
 import Login from './src/containers/Login/Login';
 import Signup from './src/containers/Signup/Signup';
 import SignupIDCode from './src/containers/Signup/Signup-IDCode';
+import FindPasswordPhone from './src/containers/Login/FindPassword-Phone';
+import FindPasswordIDCode from './src/containers/Login/FindPassword-IDCode';
+import FindPasswordPassword from './src/containers/Login/FindPassword-Password';
 //======================Test======================
 import Test from './src/containers/Test';
 
@@ -182,6 +185,51 @@ const Main = StackNavigator({
     screen: Login,
     navigationOptions: () => ({
       title: '登录',
+      headerTintColor: 'white',
+      headerStyle: {
+        display: 'none',
+
+      },
+      headerBackTitle: null,
+      headerTitleStyle: {
+        fontSize: 24,
+      },
+    }),
+  },
+  FindPasswordPhone: {
+    screen: FindPasswordPhone,
+    navigationOptions: () => ({
+      title: '忘记密码',
+      headerTintColor: 'white',
+      headerStyle: {
+        display: 'none',
+
+      },
+      headerBackTitle: null,
+      headerTitleStyle: {
+        fontSize: 24,
+      },
+    }),
+  },
+  findpasswordidcode: {
+    screen: FindPasswordIDCode,
+    navigationOptions: () => ({
+      title: '忘记密码',
+      headerTintColor: 'white',
+      headerStyle: {
+        display: 'none',
+
+      },
+      headerBackTitle: null,
+      headerTitleStyle: {
+        fontSize: 24,
+      },
+    }),
+  },
+  findpasswordpassword: {
+    screen: FindPasswordPassword,
+    navigationOptions: () => ({
+      title: '输入新密码',
       headerTintColor: 'white',
       headerStyle: {
         display: 'none',
