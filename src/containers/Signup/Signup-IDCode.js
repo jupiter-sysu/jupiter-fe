@@ -88,7 +88,7 @@ class SignupIDCode extends Component {
                     height={40 * PIXEL_RATE}
                     color="#FFF"
                     mainColor={THEME_PRIMARY_COLOR}
-                    handler={() => { this.props.user.startCountdown(); this.props.user.getFindPasswordConfirmCode()}}
+                    handler={() => { this.props.user.startCountdown(); this.props.user.getConfirmCode()}}
                     clickable={this.props.user.countdown === 0}
                 >{this.props.user.countdown === 0 ? '重新发送' : `重新发送 (${this.props.user.countdown}s)`}</MCButton>
             </ImageBackground>
