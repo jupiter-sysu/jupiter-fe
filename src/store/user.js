@@ -94,14 +94,10 @@ class user {
             // 如果已经注册了
             if (data.error_code === 401) {
                 // 提示手机已经注册,使用setTimeout是为了modal关闭后马上执行alert，否则会有冲突
-                setTimeout(() => {
-                    return 401;
-                }, 0);
+                return 401
             } else if (data.error_code === 200) {
-                console.log('200')
                 this.isLogin = true;
                 return 200;
-
             }
         }
     }
@@ -182,10 +178,7 @@ class user {
             console.log(data);
 
             if (data.error_code === 401) {
-                console.log("好，我接收到401了，不过还没进settimeout");
-                setTimeout(() => {
-                    return 401;
-                }, 0);
+                return 401;
             } else if (data.error_code === 200) {
                 console.log('200');
                 return 200;

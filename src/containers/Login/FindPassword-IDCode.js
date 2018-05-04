@@ -24,18 +24,18 @@ class FindPasswordIDCode extends Component {
 
     async handleTextSend() {
         if (this.props.user.confirmCode.length === 4) {
-            console.log('galo');
             let result = await this.props.user.validateFindPasswordIDCode();
             if (result == 200) {
-                console.log("find password 验证码正确");
                 // 跳转到 输入新密码
                 this.props.navigation.navigate('findpasswordpassword');
             } else if (result == 401) {
-                console.log("1111验证码错误啊，啊啊啊啊啊啊");
-                Toast.info('验证码错误', 2);
-                console.log("22222验证码错误啊，啊啊啊啊啊啊");
+                setTimeout(() => {
+                    Toast.info('验证码错误', 2);
+                }, 0)
             } else if (result == 0) {
-                Toast.info('暂无网络，请检查您的网络设置', 2);
+                setTimeout(() => {
+                    Toast.info('暂无网络，请检查您的网络设置', 2);
+                }, 0)
             }
         }
     }

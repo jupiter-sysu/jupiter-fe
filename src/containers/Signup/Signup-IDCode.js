@@ -24,8 +24,8 @@ class SignupIDCode extends Component {
 
     async handleTextSend() {
         if (this.props.user.confirmCode.length === 4) {
-            console.log('galo');
             let result = await this.props.user.validateConfirmCode();
+            console.log(result);
             if (result == 200) {
                 this.reset();
             } else if (result == 401) {
