@@ -15,37 +15,29 @@ const PIXEL_RATE_Y = Dimensions.get('screen').height / 667;
 
 @inject(['user']) // 注入store中的user到本组件的props里面
 @observer // 监听当前组件
-class SignupIDCode extends Component {
+class FindPasswordIDCode extends Component {
     constructor(props) {
         super(props);
         this.handleTextSend = this.handleTextSend.bind(this)
-        this.reset = this.reset.bind(this)
+        //this.reset = this.reset.bind(this)
     }
 
     async handleTextSend() {
         if (this.props.user.confirmCode.length === 4) {
-            let result = await this.props.user.validateConfirmCode();
-            console.log(result);
+            let result = await this.props.user.validateFindPasswordIDCode();
             if (result == 200) {
-                this.reset();
+                // 跳转到 输入新密码
+                this.props.navigation.navigate('findpasswordpassword');
             } else if (result == 401) {
-                Toast.info('验证码错误', 2);
+                setTimeout(() => {
+                    Toast.info('验证码错误', 2);
+                }, 0)
             } else if (result == 0) {
-                Toast.info('暂无网络，请检查您的网络设置', 2);
+                setTimeout(() => {
+                    Toast.info('暂无网络，请检查您的网络设置', 2);
+                }, 0)
             }
         }
-    }
-
-    reset() {
-        return this.props
-            .navigation
-            .dispatch(NavigationActions.reset(
-                {
-                    index: 0,
-                    actions: [
-                        NavigationActions.navigate({ routeName: 'index' })
-                    ]
-                }));
     }
 
     render() {
@@ -60,7 +52,7 @@ class SignupIDCode extends Component {
                     handler={() => this.props.navigation.goBack()}
                 ></MCHeader>
                 <View style={styles.titleContainer}>
-                    <Text style={{ fontSize: 26 * PIXEL_RATE, marginBottom: 5 * PIXEL_RATE}}>验证码已发送至</Text>
+                    <Text style={{ fontSize: 26 * PIXEL_RATE, marginBottom: 5 * PIXEL_RATE }}>验证码已发送至</Text>
                     <Text style={{ textAlign: 'center', }}>{this.props.user.userphone.toString().slice(0, 3) + ' ' + this.props.user.userphone.toString().slice(3, 7) + ' ' + this.props.user.userphone.toString().slice(7, 11)}</Text>
                 </View>
                 <View style={styles.inputContainer}>
@@ -70,11 +62,11 @@ class SignupIDCode extends Component {
                         <View style={styles.number}><Text style={styles.numberText}>{this.props.user.confirmCode.toString().slice(2, 3)}</Text></View>
                         <View style={styles.number}><Text style={styles.numberText}>{this.props.user.confirmCode.toString().slice(3, 4)}</Text></View>
                     </View>
-                    
+
                     <View style={styles.hiddenContainer}>
                         <TextInput
                             value={this.props.user.confirmCode}
-                            onChangeText={(text) => {this.props.user.changeConfirmCode(text); this.handleTextSend()}}
+                            onChangeText={(text) => { this.props.user.changeConfirmCode(text); this.handleTextSend() }}
                             style={styles.textInput}
                             keyboardType="numeric"
                             selectionColor="rgba(0,0,0,0)"
@@ -88,7 +80,7 @@ class SignupIDCode extends Component {
                     height={40 * PIXEL_RATE}
                     color="#FFF"
                     mainColor={THEME_PRIMARY_COLOR}
-                    handler={() => { this.props.user.startCountdown(); this.props.user.getConfirmCode()}}
+                    handler={() => { this.props.user.startCountdown(); this.props.user.getFindPasswordConfirmCode() }}
                     clickable={this.props.user.countdown === 0}
                 >{this.props.user.countdown === 0 ? '重新发送' : `重新发送 (${this.props.user.countdown}s)`}</MCButton>
             </ImageBackground>
@@ -106,7 +98,7 @@ class SignupIDCode extends Component {
     }
 }
 
-export default SignupIDCode;
+export default FindPasswordIDCode;
 
 const styles = StyleSheet.create({
     container: {

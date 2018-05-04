@@ -7,8 +7,9 @@ import MCHeader from '../../component/Navigation/MCHeader';
 import { THEME_PRIMARY_COLOR } from './../../common-style/theme';
 import Form, { form } from './component/Login-form';
 import { Toast } from 'antd-mobile';
-import { fetch } from '../../utils/fetch';
+import { myFetch } from '../../utils/fetch';
 import MCSpinner from '../../component/Feedback/MCSpinner';
+import { NavigationActions } from 'react-navigation';
 
 const PIXEL_RATE = Dimensions.get('screen').width / 375;
 const PIXEL_RATE_Y = Dimensions.get('screen').height / 667;
@@ -18,27 +19,46 @@ const PIXEL_RATE_Y = Dimensions.get('screen').height / 667;
 class Login extends Component {
     constructor(props) {
         super(props);
+        
         form.$hooks.onSuccess = async(form) => {
-            if (this.state.networkType === 'none' || this.state.networkType === 'NONE') {
-                Toast.info('暂无网络，请检查您的网络设置', 2);
-            } else {
-                const postData = {
-                    phone: Number(form.$('phone').value),
-                    password: form.$('password').value,
-                }
+            let result = await this.props.user.loginWithPhone(form.$('phone').value, form.$('password').value);
+            if (result == 200) {
+                // this.props.navigation.navigate()
+                this.reset();
+                console.log("login success");
+            } else if (result == 401 || result == 402) {
+                console.log("Login fail");
+                setTimeout(() => {
+                    Toast.info("账号或密码错误，请检查您的输入");
+                }, 0);
             }
         }
-
+        
         form.$hooks.onError = (form) => {
-
+            
         }
 
+        
         this.state = {
             networkType: true,
             modalVisible: false,
         }
     }
+    
+    FindPasswordPhone = () => {
+        this.props.navigation.navigate('FindPasswordPhone');
+    }
 
+    reset() {
+        return this.props.navigation.dispatch(NavigationActions.reset({
+            index: 0,
+            actions: [
+                NavigationActions.navigate({ routeName: 'index' })
+            ]
+        }));
+    }
+
+    
     render() {
         return (
             <ImageBackground
@@ -51,7 +71,7 @@ class Login extends Component {
                     handler={() => this.props.navigation.goBack()}
                 >手机号登录</MCHeader>
 
-                <Form form={form} />
+                <Form form={form} naviga={this.props.navigation} />
             </ImageBackground>
         );
     }
@@ -74,4 +94,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingTop: 100 * PIXEL_RATE,
     },
+    Findpasswordbutton: {
+        position: 'relative',
+        left: 2 * PIXEL_RATE,
+        top: 2 * PIXEL_RATE,
+    }
 });
