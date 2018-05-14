@@ -1,6 +1,8 @@
 import { action, autorun, observable } from 'mobx';
 import { Toast } from 'antd-mobile';
+import { persist } from 'mobx-persist';
 import myFetch from '../utils/fetch';
+
 
 class user {
     // signup state
@@ -53,7 +55,7 @@ class user {
            this.setModalVisible(true);
 
             // 请求数据2
-            let data = await myFetch('mobile_message.php', 'POST', postData);
+            let data = await myFetch('mobile_message', 'POST', postData);
             console.log(data);
 
             this.setModalVisible(false);
@@ -85,7 +87,7 @@ class user {
             this.setModalVisible(true);
 
             // 请求数据2
-            let data = await myFetch('registration_page.php', 'POST', postData);
+            let data = await myFetch('registration_page', 'POST', postData);
 
             this.setModalVisible(false);
 
@@ -116,7 +118,7 @@ class user {
             this.setModalVisible(true);
 
             // 发送请求
-            let data = await myFetch('mobile_login.php', 'POST', postData);
+            let data = await myFetch('mobile_login', 'POST', postData);
             console.log(data);
 
             this.setModalVisible(false);
@@ -124,6 +126,7 @@ class user {
             if (data.error_code === 200) {
                 this.setUserPhone(Number(phone));
                 this.setUserPassword(pass);
+                this.isLogin = true;
                 return 200;
             } else {
                 return data.error_code;
@@ -144,7 +147,7 @@ class user {
             this.setModalVisible(true);
 
             // 请求数据2
-            let data = await myFetch('password_change.php', 'POST', postData);
+            let data = await myFetch('password_change', 'POST', postData);
             console.log(data);
 
             this.setModalVisible(false);
@@ -171,7 +174,7 @@ class user {
             this.setModalVisible(true);
 
             // 请求数据2
-            let data = await myFetch('verify_message.php', 'POST', postData);
+            let data = await myFetch('verify_message', 'POST', postData);
 
             this.setModalVisible(false);
 
@@ -200,7 +203,7 @@ class user {
             this.setModalVisible(true);
 
             // 请求数据2
-            let data = await myFetch('new_password.php', 'POST', postData);
+            let data = await myFetch('new_password', 'POST', postData);
             console.log(data);
 
             this.setModalVisible(false);
@@ -213,10 +216,9 @@ class user {
             }
         }
     }
-
-    @observable userphone = 13902280045;
+    @persist @observable userphone = 0;
     @observable userPassword = '';
-    @observable isLogin = false;
+    @persist @observable isLogin = false;
     @action.bound
     setUserPhone(phone) {
         this.userphone = phone;

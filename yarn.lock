@@ -3933,6 +3933,12 @@ mixin-deep@^1.2.0:
   dependencies:
     minimist "0.0.8"
 
+mobx-persist@^0.4.1:
+  version "0.4.1"
+  resolved "http://registry.npm.taobao.org/mobx-persist/download/mobx-persist-0.4.1.tgz#fe5790eda04e0ee0b91c512d1347104e09363f9a"
+  dependencies:
+    serializr "^1.1.11"
+
 mobx-react-form@^1.32.3:
   version "1.32.3"
   resolved "http://registry.npm.taobao.org/mobx-react-form/download/mobx-react-form-1.32.3.tgz#d647fb9bfc9952da15a27cbf67ffab2dfdfd6d82"
@@ -5312,6 +5318,10 @@ send@0.13.2:
     on-finished "~2.3.0"
     range-parser "~1.0.3"
     statuses "~1.2.1"
+
+serializr@^1.1.11:
+  version "1.2.0"
+  resolved "http://registry.npm.taobao.org/serializr/download/serializr-1.2.0.tgz#b337264352e697106b7638c27ffb24cb56226aaa"
 
 serve-favicon@~2.3.0:
   version "2.3.2"

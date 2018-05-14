@@ -1,18 +1,21 @@
 import { AppRegistry } from 'react-native';
-import React from 'react';
+import React, { Component } from 'react';
 import { Provider } from 'mobx-react';
+
+
 import Router from './Router';
-import Test from './src/containers/Test';
 
 
 import stores from './src/store';
 
-export default function jupiterFE() {
-  return (
-    <Provider {...stores}>
-      <Router />
-    </Provider>
-  );
+export default class jupiterFE extends Component {
+  render() {
+    return (
+      <Provider {...stores}>
+        <Router />
+      </Provider>
+    );
+  }
 }
 
 AppRegistry.registerComponent('jupiterFE', () => jupiterFE);
