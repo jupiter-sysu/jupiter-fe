@@ -28,7 +28,7 @@ class FindPasswordIDCode extends Component {
             if (result == 200) {
                 // 跳转到 输入新密码
                 this.props.navigation.navigate('findpasswordpassword');
-            } else if (result == 401) {
+            } else if (result == 412) {
                 setTimeout(() => {
                     Toast.info('验证码错误', 2);
                 }, 0)

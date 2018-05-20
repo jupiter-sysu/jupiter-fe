@@ -15,6 +15,13 @@ import SignupIDCode from './src/containers/Signup/Signup-IDCode';
 import FindPasswordPhone from './src/containers/Login/FindPassword-Phone';
 import FindPasswordIDCode from './src/containers/Login/FindPassword-IDCode';
 import FindPasswordPassword from './src/containers/Login/FindPassword-Password';
+
+//= =====================Sprint 2======================
+import Experience from './src/containers/Experience/Experience';
+import Note from './src/containers/Note/Note';
+import Schedule from './src/containers/Schedule/Schedule';
+import Mine from './src/containers/Mine/Mine';
+
 //= =====================Test======================
 import Test from './src/containers/Test';
 
@@ -44,7 +51,7 @@ function changeTabTitle(op) {
 
 const Maintab = TabNavigator({
   Experience: {
-    screen: Error,
+    screen: Experience,
     navigationOptions: {
       tabBarLabel: '体验',
       tabBarIcon: ({ focused }) => {
@@ -71,7 +78,7 @@ const Maintab = TabNavigator({
     },
   },
   Notes: {
-    screen: Error,
+    screen: Note,
     navigationOptions: {
       tabBarLabel: '游记',
       tabBarIcon: ({ focused }) => {
@@ -99,7 +106,7 @@ const Maintab = TabNavigator({
 
   },
   Schedule: {
-    screen: Error,
+    screen: Schedule,
     navigationOptions: {
       tabBarLabel: '行程',
       tabBarIcon: ({ focused }) => {
@@ -123,7 +130,7 @@ const Maintab = TabNavigator({
     },
   },
   Mine: {
-    screen: Error,
+    screen: Mine,
     navigationOptions: {
       tabBarLabel: '我的',
       tabBarIcon: ({ focused }) => {

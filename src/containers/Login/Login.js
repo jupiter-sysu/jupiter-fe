@@ -60,7 +60,6 @@ class Login extends Component {
 
     
     render() {
-        console.log(this.props.user.isLogin, this.props.user.userphone)
         return (
             <ImageBackground
                 style={styles.container}

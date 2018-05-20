@@ -17,6 +17,11 @@ class user {
         this.modalVisible = status;
     }
 
+    @action.bound
+    logout() {
+        this.isLogin = false;
+        this.userphone = 0;
+    }
 
     // confirmation state
     @observable confirmCode = '';
@@ -45,7 +50,7 @@ class user {
         if (this.networkType === 'none' || this.networkType === 'NONE') {
             Toast.info('暂无网络，请检查您的网络设置', 2);
             // Toast.offline('\n暂无网络，请检查您的网络设置', 2);
-            return 500;
+            return 0;
         } else {
             const postData = {
                 phone_num: Number(phone),
@@ -55,15 +60,15 @@ class user {
            this.setModalVisible(true);
 
             // 请求数据2
-            let data = await myFetch('mobile_message', 'POST', postData);
+            let data = await myFetch('registration/mobile_message', 'POST', postData);
             console.log(data);
 
             this.setModalVisible(false);
 
             // 如果已经注册了
-            if (data.error_code === 401) {
+            if (data.error_code === 413) {
                 // 提示手机已经注册,使用setTimeout是为了modal关闭后马上执行alert，否则会有冲突
-                return 401;
+                return 413;
             } else if (data.error_code === 200) {
                 this.setUserPhone(Number(phone));
                 this.setUserPassword(pass);
@@ -87,16 +92,16 @@ class user {
             this.setModalVisible(true);
 
             // 请求数据2
-            let data = await myFetch('registration_page', 'POST', postData);
+            let data = await myFetch('registration/registration_page', 'POST', postData);
 
             this.setModalVisible(false);
 
             console.log(data);
 
             // 如果已经注册了
-            if (data.error_code === 401) {
+            if (data.error_code === 412) {
                 // 提示手机已经注册,使用setTimeout是为了modal关闭后马上执行alert，否则会有冲突
-                return 401
+                return 412;
             } else if (data.error_code === 200) {
                 this.isLogin = true;
                 return 200;
@@ -118,7 +123,7 @@ class user {
             this.setModalVisible(true);
 
             // 发送请求
-            let data = await myFetch('mobile_login', 'POST', postData);
+            let data = await myFetch('mobile_login/', 'POST', postData);
             console.log(data);
 
             this.setModalVisible(false);
@@ -180,8 +185,8 @@ class user {
 
             console.log(data);
 
-            if (data.error_code === 401) {
-                return 401;
+            if (data.error_code === 412) {
+                return 412;
             } else if (data.error_code === 200) {
                 console.log('200');
                 return 200;
@@ -226,6 +231,11 @@ class user {
     @action.bound
     setUserPassword(pass) {
         this.userPassword = pass;
+    }
+
+    @action.bound
+    login() {
+        this.isLogin = true;
     }
 
 }
