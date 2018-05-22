@@ -1,7 +1,7 @@
 import { action, autorun, observable } from 'mobx';
 import { Toast } from 'antd-mobile';
 import { persist } from 'mobx-persist';
-import myFetch from '../utils/fetch';
+import sPost from '../utils/simpleFetch';
 
 
 class user {
@@ -30,8 +30,7 @@ class user {
     changeConfirmCode(text) {
         if (text.length < 5) {
             this.confirmCode = text;
-        }
-        
+        } 
     }
     @action.bound
     startCountdown() {
@@ -59,53 +58,13 @@ class user {
             console.log(postData);
            this.setModalVisible(true);
 
-            // 请求数据2
-            let data = await myFetch('registration/mobile_message', 'POST', postData);
-            console.log(data);
-
-            this.setModalVisible(false);
-
-            // 如果已经注册了
-            if (data.error_code === 413) {
-                // 提示手机已经注册,使用setTimeout是为了modal关闭后马上执行alert，否则会有冲突
-                return 413;
-            } else if (data.error_code === 200) {
-                this.setUserPhone(Number(phone));
-                this.setUserPassword(pass);
-                return 200;
-
-            }
-        }
-    }
-
-    @action.bound
-    async validateConfirmCode() {
-        if (this.networkType === 'none' || this.networkType === 'NONE') {  
-            // Toast.offline('\n暂无网络，请检查您的网络设置', 2);
-            return 0;
-        } else {
-            const postData = {
-                phone_num: this.userphone,
-                mobile_message: this.confirmCode,
-            }
-
-            this.setModalVisible(true);
-
-            // 请求数据2
-            let data = await myFetch('registration/registration_page', 'POST', postData);
-
-            this.setModalVisible(false);
-
-            console.log(data);
-
-            // 如果已经注册了
-            if (data.error_code === 412) {
-                // 提示手机已经注册,使用setTimeout是为了modal关闭后马上执行alert，否则会有冲突
-                return 412;
-            } else if (data.error_code === 200) {
-                this.isLogin = true;
-                return 200;
-            }
+           try {
+               await sPost('/signup/get/captcha/', postData);
+           } catch (err) {
+              Toast.info(err.message, 2);
+           } finally {
+               this.setModalVisible(false);
+           }
         }
     }
 
@@ -143,25 +102,21 @@ class user {
     @action.bound
     async getFindPasswordConfirmCode(phone = this.user.userphone) {
         if (this.networkType === 'none' || this.networkType === 'NONE') {
-            return 0;
+            Toast.info('暂无网络，请检查您的网络设置', 2);
         } else {
             const postData = {
                 phone_num: Number(phone),
             }
             console.log(postData);
             this.setModalVisible(true);
-
-            // 请求数据2
-            let data = await myFetch('password_change', 'POST', postData);
-            console.log(data);
-
-            this.setModalVisible(false);
-
-            if (data.error_code === 401) {
-                return 401;
-            } else if (data.error_code === 200) {
-                this.setUserPhone(Number(phone));
-                return 200;
+            try {
+              await sPost('/modify/get/captcha/', postData);
+            } catch(err) {
+                if (err.message === 'unregistered') {
+                    Toast.info('手机号码未注册', 2);
+                }
+            } finally {
+                this.setModalVisible(false);
             }
         }
     }

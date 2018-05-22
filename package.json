@@ -24,6 +24,7 @@
     "react-native-loader": "^1.2.1",
     "react-native-vector-icons": "^4.5.0",
     "react-navigation": "^1.5.9",
+    "styled-components": "^3.2.6",
     "validator": "^9.4.1",
     "validatorjs": "^3.14.2"
   },
