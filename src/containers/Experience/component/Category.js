@@ -18,44 +18,56 @@ const ItemSubtitle = styled.Text`
   line-height: 16px;
 `;
 
-const OverflowText = styled.Text`
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  font-weight: bold;
-  color: #FFF;
-  z-index: 100;
-  background-color: rgba(1,1,1,0);
-`;
 
+const COLOR = [
+  'rgba(94,120,139, 0.5)',
+  'rgba(239,89,105,0.5)',
+  'rgba(169,237,231,0.5)',
+  'rgba(245,204,63,0.5)',
+  'rgba(199,75,88,0.5)',
+  'rgba(174,228,106,0.5)',
+];
 const PIXEL_RATE = Dimensions.get('screen').width / 375;
 
-const Item = ({
-  title, description, name, photo, id,
+const Category = ({
+  id, photo, category, index,
 }) => (
   <TouchableOpacity
     activeOpacity={1}
     onPress={() => console.log(id)}
     style={styles.itemContainer}
   >
-    <OverflowText>{name}</OverflowText>
+    <View style={{
+        backgroundColor: COLOR[index],
+        width: 140 * PIXEL_RATE,
+        height: 90 * PIXEL_RATE,
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 100,
+    }}
+    >
+      <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 18 }}>{category}</Text>
+    </View>
     <Image source={{ uri: photo }} style={styles.itemPic} />
-    <ItemTitle>{title}</ItemTitle>
-    <ItemSubtitle>{description}</ItemSubtitle>
   </TouchableOpacity>
 );
 
 const styles = StyleSheet.create({
   itemContainer: {
-    width: 170 * PIXEL_RATE,
+    width: 140 * PIXEL_RATE,
     borderWidth: 0,
     borderColor: 'red',
-    marginBottom: 10,
+    // marginLeft: (Dimensions.get('screen').width - 170 * 2) / 2,
+    // marginRight: (Dimensions.get('screen').width - 170 * 2) / 2,
+    marginRight: 8,
   },
   itemPic: {
-    width: 170 * PIXEL_RATE,
-    height: 107 * PIXEL_RATE,
+    width: 140 * PIXEL_RATE,
+    height: 90 * PIXEL_RATE,
   },
 });
 
-export default observer(Item);
+export default observer(Category);

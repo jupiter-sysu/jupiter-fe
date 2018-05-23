@@ -343,7 +343,7 @@ export const Main = StackNavigator({
 }, {
   headerMode: 'float',
   mode: 'card',
-  initialRouteName: 'welcome',
+  initialRouteName: 'index',
   transitionConfig: () => (Platform.OS === 'ios' ? {} : {
     screenInterpolator: (sceneProps) => {
       const { layout, position, scene } = sceneProps;
@@ -368,7 +368,7 @@ export const Main = StackNavigator({
 export default function Router() {
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={THEME_PRIMARY_COLOR} />
+      {/* <StatusBar barStyle="dark-content" backgroundColor={THEME_PRIMARY_COLOR} /> */}
       <Main />
     </View>
   );
