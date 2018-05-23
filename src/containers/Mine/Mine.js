@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, Image, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { inject, observer } from 'mobx-react';
 
-@inject(['user'])
+@inject(stores => ({
+  user: stores.user,
+  tab: stores.tab,
+}))
 @observer
 class Mine extends Component {
 
