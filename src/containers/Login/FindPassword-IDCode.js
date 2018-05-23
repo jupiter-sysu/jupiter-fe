@@ -1,12 +1,12 @@
-import React, { Component } from "react";
-import { View, StyleSheet, Text, ImageBackground, Dimensions, TextInput, StatusBar, NetInfo, Platform, Alert, } from "react-native";
-import { observer, inject } from "mobx-react";
+import React, { Component } from 'react';
+import { View, StyleSheet, Text, ImageBackground, Dimensions, TextInput, StatusBar, NetInfo, Platform, Alert, Keyboard } from 'react-native';
+import { observer, inject } from 'mobx-react';
 import { Button } from 'antd-mobile';
 import MCHeader from '../../component/Navigation/MCHeader';
 import MCButton from '../../component/DataEntry/MCButton';
 import { THEME_PRIMARY_COLOR } from './../../common-style/theme';
 import { Toast } from 'antd-mobile';
-import myFetch from '../../utils/fetch';
+import post from '../../utils/fetch';
 import MCSpinner from '../../component/Feedback/MCSpinner';
 import { NavigationActions } from 'react-navigation';
 
@@ -18,24 +18,30 @@ const PIXEL_RATE_Y = Dimensions.get('screen').height / 667;
 class FindPasswordIDCode extends Component {
     constructor(props) {
         super(props);
-        this.handleTextSend = this.handleTextSend.bind(this)
-        //this.reset = this.reset.bind(this)
+        this.handleTextSend = this.handleTextSend.bind(this);
+        // this.reset = this.reset.bind(this)
     }
 
     async handleTextSend() {
         if (this.props.user.confirmCode.length === 4) {
-            let result = await this.props.user.validateFindPasswordIDCode();
-            if (result == 200) {
-                // 跳转到 输入新密码
-                this.props.navigation.navigate('findpasswordpassword');
-            } else if (result == 412) {
-                setTimeout(() => {
-                    Toast.info('验证码错误', 2);
-                }, 0)
-            } else if (result == 0) {
-                setTimeout(() => {
-                    Toast.info('暂无网络，请检查您的网络设置', 2);
-                }, 0)
+            if (this.props.user.networkType === 'none' || this.props.user.networkType === 'NONE') {
+                Toast.info('暂无网络, 请检查您的网络设置', 2);
+            } else {
+                this.props.user.setModalVisible(true);
+                post('/modify/validate/captcha/', {
+                    captcha: Number(this.props.user.confirmCode),
+                }, (res) => {
+                    Keyboard.dismiss();
+                    this.props.navigation.navigate('findpasswordpassword');
+                }, (err) => {
+                    if (err.enmsg === 'captcha_error') {
+                        Toast.info('验证码错误!', 2);
+                    } else {
+                        Toast.info(err.enmsg, 2);
+                    }
+                }, () => {
+                    this.props.user.setModalVisible(false);
+                });
             }
         }
     }
@@ -50,10 +56,10 @@ class FindPasswordIDCode extends Component {
                 <MCSpinner isVisible={this.props.user.modalVisible} />
                 <MCHeader
                     handler={() => this.props.navigation.goBack()}
-                ></MCHeader>
+                />
                 <View style={styles.titleContainer}>
                     <Text style={{ fontSize: 26 * PIXEL_RATE, marginBottom: 5 * PIXEL_RATE }}>验证码已发送至</Text>
-                    <Text style={{ textAlign: 'center', }}>{this.props.user.userphone.toString().slice(0, 3) + ' ' + this.props.user.userphone.toString().slice(3, 7) + ' ' + this.props.user.userphone.toString().slice(7, 11)}</Text>
+                    <Text style={{ textAlign: 'center' }}>{`${this.props.user.userphone.toString().slice(0, 3)} ${this.props.user.userphone.toString().slice(3, 7)} ${this.props.user.userphone.toString().slice(7, 11)}`}</Text>
                 </View>
                 <View style={styles.inputContainer}>
                     <View style={styles.displayContianer}>
@@ -66,11 +72,11 @@ class FindPasswordIDCode extends Component {
                     <View style={styles.hiddenContainer}>
                         <TextInput
                             value={this.props.user.confirmCode}
-                            onChangeText={(text) => { this.props.user.changeConfirmCode(text); this.handleTextSend() }}
+                            onChangeText={(text) => { this.props.user.changeConfirmCode(text); this.handleTextSend(); }}
                             style={styles.textInput}
                             keyboardType="numeric"
                             selectionColor="rgba(0,0,0,0)"
-                            autoFocus={true}
+                            autoFocus
                         />
                     </View>
                 </View>
@@ -80,21 +86,22 @@ class FindPasswordIDCode extends Component {
                     height={40 * PIXEL_RATE}
                     color="#FFF"
                     mainColor={THEME_PRIMARY_COLOR}
-                    handler={() => { this.props.user.startCountdown(); this.props.user.getFindPasswordConfirmCode() }}
+                    handler={() => { this.props.user.startCountdown(); this.props.user.getFindPasswordConfirmCode(); }}
                     clickable={this.props.user.countdown === 0}
-                >{this.props.user.countdown === 0 ? '重新发送' : `重新发送 (${this.props.user.countdown}s)`}</MCButton>
+                >{this.props.user.countdown === 0 ? '重新发送' : `重新发送 (${this.props.user.countdown}s)`}
+                </MCButton>
             </ImageBackground>
         );
     }
 
     componentDidMount() {
-        NetInfo.addEventListener('connectionChange',
+        NetInfo.addEventListener(
+            'connectionChange',
             (networkType) => {
                 this.props.user.setNetworkType(networkType.type);
-            }
+            },
         );
         this.props.user.startCountdown();
-
     }
 }
 
@@ -121,23 +128,23 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     textInput: {
-        color: 'rgba(0,0,0,0)'
+        color: 'rgba(0,0,0,0)',
     },
     hiddenContainer: {
     },
     displayContianer: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     number: {
         width: 40,
         height: 80,
         borderBottomWidth: 1,
         justifyContent: 'center',
-        borderColor: '#BBBBBB'
+        borderColor: '#BBBBBB',
     },
     numberText: {
         fontSize: 50,
         textAlign: 'center',
-    }
+    },
 });
