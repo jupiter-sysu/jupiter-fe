@@ -1,11 +1,7 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Image, Text, ImageBackground, Dimensions, AsyncStorage } from "react-native";
+import { View, StyleSheet, Image, Text, ImageBackground, Dimensions } from "react-native";
 import { observer, inject } from "mobx-react";
-import { create } from 'mobx-persist';
-import { NavigationActions } from 'react-navigation';
-
 import MCButton from '../../component/DataEntry/MCButton';
-import stores from '../../store';
 const PIXEL_RATE = Dimensions.get('screen').width / 375;
 
 @observer // 监听当前组件
@@ -23,23 +19,6 @@ class Welcome extends Component {
 
     handleLoginOnPress() {
         this.props.navigation.navigate('login');
-    }
-
-    componentDidMount() {
-        const hydrate = create({ storage: AsyncStorage });
-        const { user } = stores;
-        hydrate('isLogin', user).then((data) => {
-            if(data.isLogin) {
-                console.log('hi');
-                this.props.navigation.dispatch(NavigationActions.reset({
-                    index: 0,
-                    actions: [
-                        NavigationActions.navigate({ routeName: 'index' })
-                    ]
-                }));
-            }
-        });
-        hydrate('userphone', user);
     }
  
     render() {
