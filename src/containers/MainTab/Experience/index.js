@@ -37,6 +37,7 @@ class Experience extends Component {
       animatedValue: new Animated.Value(0),
     }
     this.handleScroll = this.handleScroll.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
   }
   
   componentDidMount() {
@@ -44,6 +45,11 @@ class Experience extends Component {
     this.props.experience.loadPage();
     this.props.experience.setHeaderSearchBar(false);
     this.props.setStatusBar('light-content');
+  }
+
+  handleRefresh() {
+    console.log('refresh');
+    this.props.experience.loadPage();
   }
 
   _onViewableItemsChanged = (info: {
@@ -57,7 +63,7 @@ class Experience extends Component {
   }
   ) => {
     // Impressions can be logged here
-    if (true) {
+    if (false) {
       infoLog(
         'onViewableItemsChanged: ',
         info.changed.map((v) => ({ ...v, item: '...' })),
@@ -220,6 +226,7 @@ class Experience extends Component {
 			 <SectionList
          onScroll={this.handleScroll}
          scrollEventThrottle={16}
+         onEndReached={() => this.handleRefresh()}
          showsVerticalScrollIndicator={false}
 				 renderItem={({ item, index, section }) => {
            return (

@@ -264,7 +264,6 @@ class TabBar extends Component{
     
 
     render() {
-        console.log(this.props);
         const {
             navigation,
             renderIcon,
