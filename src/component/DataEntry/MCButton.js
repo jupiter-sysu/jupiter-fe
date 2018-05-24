@@ -15,7 +15,7 @@ const PIXEL_RATE = Dimensions.get('screen').width / 375;
 // >clickable:boolean,是否可以点击
 
 function MCButton(props) {
-    const { width, height, mainColor='#fff', color='black', size=20 * PIXEL_RATE, outline=false, handler, children="按钮", clickable=true } = props;
+    const { width, height, mainColor='#fff', color='balck', size=20 * PIXEL_RATE, outline=false, handler, children="按钮", clickable=true } = props;
     if (outline === true) {
         return (
             <TouchableOpacity
