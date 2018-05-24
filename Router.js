@@ -16,14 +16,16 @@ import FindPasswordPhone from './src/containers/Login/FindPassword-Phone';
 import FindPasswordIDCode from './src/containers/Login/FindPassword-IDCode';
 import FindPasswordPassword from './src/containers/Login/FindPassword-Password';
 
-//= =====================Sprint 2======================
-import Experience from './src/containers/Experience/Experience';
-import Note from './src/containers/Note/Note';
-import Schedule from './src/containers/Schedule/Schedule';
-import Mine from './src/containers/Mine/Mine';
+// ======================Main Tab======================
+// ----------------------Experience----------------------
+import Experience from './src/containers/MainTab/Experience';
+import ExperienceDetail from './src/containers/MainTab/Experience/containers/ExperienceDetail/ExperienceDetailTabContainer';
+
+import Note from './src/containers/MainTab/Note';
+import Schedule from './src/containers/MainTab/Schedule';
+import Mine from './src/containers/MainTab/Mine';
 
 //= =====================Test======================
-import Test from './src/containers/Test';
 
 
 import { THEME_PRIMARY_COLOR } from './src/common-style/theme';
@@ -325,10 +327,10 @@ export const Main = StackNavigator({
       },
     }),
   },
-  test: {
-    screen: Test,
+  experienceDetail: {
+    screen: ExperienceDetail,
     navigationOptions: () => ({
-      title: '登录',
+      title: '验证码',
       headerTintColor: 'white',
       headerStyle: {
         display: 'none',
@@ -343,7 +345,7 @@ export const Main = StackNavigator({
 }, {
   headerMode: 'float',
   mode: 'card',
-  initialRouteName: 'index',
+  initialRouteName: 'welcome',
   transitionConfig: () => (Platform.OS === 'ios' ? {} : {
     screenInterpolator: (sceneProps) => {
       const { layout, position, scene } = sceneProps;
