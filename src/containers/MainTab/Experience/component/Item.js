@@ -1,6 +1,6 @@
 import React from 'react';
-import { Text, View, Image, StyleSheet, StatusBar, ScrollView, Dimensions, TextInput, TouchableOpacity } from 'react-native';
-import { observer } from 'mobx-react';
+import { Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { observer, inject } from 'mobx-react';
 import styled from 'styled-components';
 
 const ItemTitle = styled.Text`
@@ -31,11 +31,14 @@ const OverflowText = styled.Text`
 const PIXEL_RATE = Dimensions.get('screen').width / 375;
 
 const Item = ({
-  title, description, name, photo, id,
+  title, description, name, photo, id, navigation, experience
 }) => (
   <TouchableOpacity
     activeOpacity={1}
-    onPress={() => console.log(id)}
+    onPress={() => {
+      experience.setCurrentExperienceID(id);
+      navigation.navigate('experienceDetail');
+    }}
     style={styles.itemContainer}
   >
     <OverflowText>{name}</OverflowText>
@@ -58,4 +61,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default observer(Item);
+export default inject(stores => ({
+  experience: stores.experience,
+}))(observer(Item));

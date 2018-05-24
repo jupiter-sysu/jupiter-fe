@@ -11,10 +11,29 @@ class experienceSotre {
     @observable headerPhoto = '';
     @observable showHeaderSearchBar = false;
     @observable currentData = null;
+    @observable showOriginalSearchBar = true;
+    @observable currentExperienceID = '';
+    @observable currentTab = 1;
+
+    @action.bound
+    setCurrentTab(id) {
+        this.currentTab = id;
+    }
+
+    @action.bound
+    setCurrentExperienceID(id) {
+        this.currentExperienceID = id;
+    }
 
     @action.bound
     setHeaderSearchBar(status) {
         this.showHeaderSearchBar = status;
+    }
+
+    @action.bound
+    setOriginalSearchBar(status) {
+        console.log(status);
+        this.showOriginalSearchBar = status;
     }
 
     @action.bound

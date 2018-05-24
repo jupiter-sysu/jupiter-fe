@@ -3,10 +3,11 @@ import { Text, View, Image, StyleSheet, StatusBar, ScrollView, Dimensions, TextI
 import { inject, observer } from 'mobx-react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styled from 'styled-components';
+import infoLog from 'infoLog';
 
 import Item from './component/Item';
 import Category from './component/Category';
-import MCSpinner from '../../component/Feedback/MCSpinner';
+import MCSpinner from '../../../component/Feedback/MCSpinner';
 import Header from './component/Header';
 
 const Title = styled.Text`
@@ -45,6 +46,25 @@ class Experience extends Component {
     this.props.setStatusBar('light-content');
   }
 
+  _onViewableItemsChanged = (info: {
+    changed: Array<{
+      key: string,
+      isViewable: boolean,
+      item: any,
+      index: ?number,
+      section?: any,
+    }>
+  }
+  ) => {
+    // Impressions can be logged here
+    if (true) {
+      infoLog(
+        'onViewableItemsChanged: ',
+        info.changed.map((v) => ({ ...v, item: '...' })),
+      );
+    }
+  };
+
   handleScroll = (() => {
     let offset = 0;
     return (e) => {
@@ -58,19 +78,20 @@ class Experience extends Component {
         }
       ])(e);
       if (e.nativeEvent.contentOffset.y >  offset) {
-        console.log(e.nativeEvent.contentOffset.y);
         if (e.nativeEvent.contentOffset.y > 10) {
           this.props.setStatusBar('dark-content');
         }
-        if (e.nativeEvent.contentOffset.y >= 168) {
+        if (e.nativeEvent.contentOffset.y >= 168 * PIXEL_RATE) {
           this.props.experience.setHeaderSearchBar(true);
+          this.props.experience.setOriginalSearchBar(false);
         }
       } else {
         if (e.nativeEvent.contentOffset.y < 20) {
           this.props.setStatusBar('light-content');
         }
-        if (e.nativeEvent.contentOffset.y <= 168) {
+        if (e.nativeEvent.contentOffset.y <= 168 * PIXEL_RATE) {
           this.props.experience.setHeaderSearchBar(false);
+          this.props.experience.setOriginalSearchBar(true);
         }
       }
       offset = e.nativeEvent.contentOffset.y;
@@ -79,50 +100,53 @@ class Experience extends Component {
 
    render() {
      let interpolatedColor = this.state.animatedValue.interpolate({
-       inputRange: [0, 100],
+       inputRange: [0, 100 * PIXEL_RATE],
        outputRange: ['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 1)'],
        extrapolate: 'clamp'
      });
 
      let interpolatedRadius = this.state.animatedValue.interpolate({
-       inputRange: [168, 200],
+       inputRange: [168* PIXEL_RATE, 200 * PIXEL_RATE],
        outputRange: [50 * PIXEL_RATE, 0],
        extrapolate: 'clamp'
      });
 
      let interpolatedWidth = this.state.animatedValue.interpolate({
-       inputRange: [168, 200],
+       inputRange: [168 * PIXEL_RATE, 230 * PIXEL_RATE],
        outputRange: [340 * PIXEL_RATE, Dimensions.get('screen').width],
        extrapolate: 'clamp'
      });
      
      let interpolatedHeight = this.state.animatedValue.interpolate({
-       inputRange: [168, 200],
+       inputRange: [168 * PIXEL_RATE, 230 * PIXEL_RATE],
        outputRange: [50 * PIXEL_RATE, 46 * PIXEL_RATE],
        extrapolate: 'clamp'
      });
 
      let interpolatedML = this.state.animatedValue.interpolate({
-       inputRange: [168, 200],
+       inputRange: [168 * PIXEL_RATE, 230 * PIXEL_RATE],
        outputRange: [(Dimensions.get('screen').width - 350 * PIXEL_RATE) / 2, 0],
        extrapolate: 'clamp'
      });
 
      let interpolatedBorderColor = this.state.animatedValue.interpolate({
-       inputRange: [180, 220],
-       outputRange: ['rgba(80, 80, 80, 0)', 'rgba(80, 80, 80, 1)'],
+       inputRange: [180 * PIXEL_RATE, 250 * PIXEL_RATE],
+       outputRange: ['rgba(80, 80, 80, 0)', 'rgba(200, 200, 200, 1)'],
        extrapolate: 'clamp'
      });
 
-     let event = Animated.event([
-       {
-         nativeEvent: {
-           contentOffset: {
-             y: this.state.animatedValue
-           }
-         }
-       }
-     ]);
+     let interpolatedTextColor = this.state.animatedValue.interpolate({
+       inputRange: [168 * PIXEL_RATE, 200 * PIXEL_RATE],
+         outputRange: ['rgba(00, 0, 0, 1)', 'rgba(200, 200, 200, 1)'],
+         extrapolate: 'clamp'
+     });
+
+     let interpolatedMT = this.state.animatedValue.interpolate({
+       inputRange: [168 * PIXEL_RATE, 200 * PIXEL_RATE],
+         outputRange: [3, -10],
+         extrapolate: 'clamp'
+     });
+     
 
      if (this.props.experience.isIniting) {
        return (
@@ -138,8 +162,8 @@ class Experience extends Component {
        <Animated.View style={{
          backgroundColor: interpolatedColor,
          width: '100%',
-         height: 22,
-         zIndex: 100,
+         height: 23,
+         zIndex: 101,
          position: 'absolute',
          top: 0,
        }} />
@@ -152,6 +176,10 @@ class Experience extends Component {
              style={{
                zIndex: 100,
                alignItems: 'center',
+               
+              //  shadowOffset: { width: 0, height: 0 },
+              //  shadowColor: 'black',
+              //  shadowOpacity: .3,
              }}
            >
              <Animated.View
@@ -160,24 +188,30 @@ class Experience extends Component {
                  width: interpolatedWidth,
                  height: interpolatedHeight,
                 //  marginLeft: interpolatedML,
+                 shadowOffset: { width: 0, height: 2 },
+                 shadowColor: 'black',
+                 shadowOpacity: .2,
+                 elevation: 3,
+                
                }]}
              >
                <Animated.View style={{
-                 borderWidth: 1,
+                 borderWidth: .5,
                  borderColor: interpolatedBorderColor,
                  width: '90%',
                  height: '70%',
                  borderRadius: 20,
-                 paddingLeft: 12 * PIXEL_RATE,
+                 paddingLeft: 13 * PIXEL_RATE,
                  justifyContent: 'flex-start',
                  alignItems: 'center',
                  flexDirection: 'row',
                  position: 'relative',
-                 
+                 marginTop: interpolatedMT,
                }}>
-                 <Ionicons name="ios-search" size={20} style={{ marginTop: 2 * PIXEL_RATE, marginRight: 10 * PIXEL_RATE }} />
-                 <Text style={{
-                 }}>搜索目的地、体验</Text>
+                 <Ionicons name="ios-search" size={20} style={{ color: 'rgba(200, 200, 200, 1)', marginTop: 2 * PIXEL_RATE, marginRight: 10 * PIXEL_RATE }} />
+                 <Animated.Text style={{
+                   color: interpolatedTextColor
+                 }}>搜索目的地、体验</Animated.Text>
                </Animated.View>
              </Animated.View>
            </TouchableOpacity>
@@ -193,7 +227,7 @@ class Experience extends Component {
                <View style={styles.itemsContainer}>
                  {
                    item.map((item, index) => (
-                     <Item {...item} key={'discovery' + index} />
+                     <Item {...item}  navigation={this.props.navigation} key={'discovery' + index} />
                    ))
                  }
                </View>
@@ -221,6 +255,12 @@ class Experience extends Component {
          contentContainerStyle={{
             // alignItems: 'center',
          }}
+          viewabilityConfig={{
+             minimumViewTime: 3000,
+             viewAreaCoveragePercentThreshold: 75,
+             waitForInteraction: true,
+          }}
+         onViewableItemsChanged={this._onViewableItemsChanged}
 				 renderSectionHeader={({ section: { title, subtitle, photo, id } }) => (
            <View>
              <View style={{ flexDirection: 'row', paddingLeft: 10, marginBottom: 4 }}>
@@ -252,11 +292,20 @@ class Experience extends Component {
            
 					 
          )}
+         enableVirtualization={true}
          stickySectionHeadersEnabled={false}
 				 ListHeaderComponent={<Header photo={this.props.experience.headerPhoto} />}
          sections={this.props.experience.section}
 				 keyExtractor={(item, index) => item + index}
-			 />
+			 >
+        <Text style={{
+          color: 'red'
+        }}>笔记</Text>
+         <Text>笔记</Text>
+          <Text>笔记</Text>
+           <Text>笔记</Text>
+
+       </SectionList>
 		</View> 
 		
          
@@ -304,9 +353,10 @@ const styles = StyleSheet.create({
     borderRadius: 50 * PIXEL_RATE,
     backgroundColor: '#FFF',
     justifyContent: 'center',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     flexDirection: 'row',
     marginLeft: (Dimensions.get('screen').width - 340 * PIXEL_RATE) / 2,
+    marginTop: 0,
   },
   contentContainer: {
     alignItems: 'center',
