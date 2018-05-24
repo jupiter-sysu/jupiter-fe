@@ -1,4 +1,3 @@
-import test from './test';
 import user from './user';
 import experience from './experience';
 import tab from './tab';
