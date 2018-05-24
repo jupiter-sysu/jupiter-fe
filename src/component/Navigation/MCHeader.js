@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Button, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { Text, View, Button, StyleSheet, TouchableOpacity, Dimensions, } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 const PIXEL_RATE = Dimensions.get('screen').width / 375;
 const PIXEL_RATE_Y = Dimensions.get('screen').height / 667;

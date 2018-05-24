@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Text, ImageBackground, Dimensions, TextInput, StatusBar, NetInfo, Platform, Alert, } from "react-native";
+import { View, StyleSheet, Text, ImageBackground, Dimensions, TextInput, StatusBar, NetInfo, Platform, Alert, Keyboard } from "react-native";
 import { observer, inject } from "mobx-react";
 import { Button } from 'antd-mobile';
 import MCHeader from '../../component/Navigation/MCHeader';
 import MCButton from '../../component/DataEntry/MCButton';
 import { THEME_PRIMARY_COLOR } from './../../common-style/theme';
 import { Toast } from 'antd-mobile';
-import myFetch from '../../utils/fetch';
+import post from '../../utils/fetch';
 import MCSpinner from '../../component/Feedback/MCSpinner';
 import { NavigationActions } from 'react-navigation';
 
@@ -18,19 +18,32 @@ const PIXEL_RATE_Y = Dimensions.get('screen').height / 667;
 class SignupIDCode extends Component {
     constructor(props) {
         super(props);
-        this.handleTextSend = this.handleTextSend.bind(this)
-        this.reset = this.reset.bind(this)
+        this.handleTextSend = this.handleTextSend.bind(this);
+        this.reset = this.reset.bind(this);
     }
 
-    async handleTextSend() {
+    handleTextSend() {
         if (this.props.user.confirmCode.length === 4) {
-            console.log('galo');
-            let result = await this.props.user.validateConfirmCode();
-            if (result == 200) {
-                this.reset();
-            } else if (result == 401) {
-                Toast.info('验证码错误', 2);
-            }
+            if (this.props.user.networkType === 'none' || this.props.user.networkType === 'NONE') {
+                Toast.info('暂无网络，请检查您的网络设置', 2);
+            } else {
+                this.props.user.setModalVisible(true);
+                post('/signup/validate/captcha/', {
+                    phone_num: Number(this.props.user.userphone),
+                    captcha: Number(this.props.user.confirmCode),
+                }, (res) => {
+                    Keyboard.dismiss();
+                    this.props.user.login();
+                    this.props.navigation.navigate('index');
+                }, (err) => {
+                    if (err.enmsg === 'message_match_error') {
+                        Toast.info('验证码错误！', 2);
+                    }
+                    Toast.info(err.cnmsg, 2);
+                }, () => {
+                    this.props.user.setModalVisible(false);
+                });
+            } 
         }
     }
 
@@ -94,13 +107,13 @@ class SignupIDCode extends Component {
     }
 
     componentDidMount() {
+        this.props.user.changeConfirmCode('');
         NetInfo.addEventListener('connectionChange',
             (networkType) => {
                 this.props.user.setNetworkType(networkType.type);
             }
         );
         this.props.user.startCountdown();
-
     }
 }
 
