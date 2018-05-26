@@ -10,7 +10,6 @@ const PIXEL_RATE = Dimensions.get('screen').width / 375;
 const Header = ({
   photo, experience,
 }) => {
-  console.log(experience.showOriginalSearchBar, 'hi');
   return (
     <View style={{ }}>
       <Image source={{ uri: photo }} style={styles.headerPic} />
