@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Dimensions, StyleSheet, TouchableOpacity, ImageBackground, Image, ScrollView } from 'react-native';
+import { Text, View, Dimensions, StyleSheet, TouchableOpacity, ImageBackground, Image, ScrollView, Animated } from 'react-native';
 import { inject, observer, } from 'mobx-react';
 import styled from 'styled-components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -14,8 +14,22 @@ const PIXEL_RATE_Y = Dimensions.get('screen').height / 667;
 @observer
 class Experience extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            opacityAnima: new Animated.Value(1),
+            bottomAnima: new Animated.Value(0),
+            scrollY: 0,
+            bottomBarVisible: true
+        }
+
+        this.beginDrag = this.beginDrag.bind(this);
+        this.endDrag = this.endDrag.bind(this);
+    }
+
     componentDidMount() {
         // 请求资源
+        this.props.experience.loadExperiencePage();
 
     }
 
@@ -25,139 +39,210 @@ class Experience extends Component {
         });
     }
 
-    
+    beginDrag = (e) => {
+        console.log("beginDrag: " + e.nativeEvent.contentOffset.y);
+    }
+
+    endDrag = (e) => {
+        console.log("endDrag: " + e.nativeEvent.contentOffset.y)
+        this.setState({
+            scrollY: e.nativeEvent.contentOffset.y
+        })
+    }
+
+    handleScroll = (e) => {
+        if (this.state.bottomBarVisible && e.nativeEvent.contentOffset.y - this.state.scrollY > 30) {
+            Animated.parallel([
+                Animated.timing(
+                    this.state.opacityAnima,
+                    {
+                        toValue: 0,
+                    }
+                ),
+                Animated.timing(
+                    this.state.bottomAnima,
+                    {
+                        toValue: -45 * PIXEL_RATE,
+                    }
+                )
+            ]).start();
+            this.setState({
+                bottomBarVisible: false
+            })
+        } else if (!this.state.bottomBarVisible && e.nativeEvent.contentOffset.y - this.state.scrollY < -20) {
+            Animated.parallel([
+                Animated.timing(
+                    this.state.opacityAnima,
+                    {
+                        toValue: 1,
+                    }
+                ),
+                Animated.timing(
+                    this.state.bottomAnima,
+                    {
+                        toValue: 0 * PIXEL_RATE,
+                    }
+                )
+            ]).start();
+            this.setState({
+                bottomBarVisible: true
+            })
+        } 
+    }
+
+    endScroll = (e) => {
+        this.setState({
+            scrollY: e.nativeEvent.contentOffset.y,
+        })
+        console.log(this.state.scrollY);
+    }
 
     render() {
-        console.log(this.props.navigation);
+        if (this.props.experience.detailPageIniting == true) {
+            return <View>
+                
+            </View>
+        } else 
         return (
-            <ScrollView style={styles.container}>
-                <ImageBackground source={{ uri: "https://img-blog.csdn.net/20180528134720418" }} style={styles.cover}>
-                    <View style={styles.Headercontainer}>
-                        <TouchableOpacity
-                            onPress={() => {
-                                console.log('hi', this.props.navigation.goBack);
-                                this.props.navigation.goBack();
-                            }}
-                            style={styles.backIcon}
-                        >
-                            <Ionicons name='ios-arrow-back' size={20 * PIXEL_RATE} style={{ marginTop: 2, color: 'white', backgroundColor: 'rgba(0,0,0,0)' }} />
-                        </TouchableOpacity>
-                        <View style={styles.optionContainer}>
+            <View style={styles.container}>
+                <ScrollView
+                    onScroll={this.handleScroll}
+                    onScrollBeginDrag={this.beginDrag}
+                    onScrollEndDrag={this.endDrag}
+                    onMomentumScrollEnd={(e) => {
+                        console.log("momentScrollend: " + e.nativeEvent.contentOffset.y)
+                        this.setState({
+                            scrollY: e.nativeEvent.contentOffset.y
+                        })
+                    }}
+                    scrollEventThrottle={16}
+                >
+                    <ImageBackground source={{ uri: "https://img-blog.csdn.net/20180528134720418" }} style={styles.cover}>
+                        <View style={styles.Headercontainer}>
                             <TouchableOpacity
-                                activeOpacity={1}
                                 onPress={() => {
-                                    this.props.experience.setCurrentTab(1);
+                                    console.log('hi', this.props.navigation.goBack);
+                                    this.props.navigation.goBack();
                                 }}
-                                style={this.props.experience.currentTab === 1 ?
-                                styles.activeTabButton
-                                : styles.inactiveTabButton}
+                                style={styles.backIcon}
                             >
-                                <Text style={{
-                                    fontSize: 16,
-                                    color: "white",
-                                }}>体验</Text>
+                                <Ionicons name='ios-arrow-back' size={20 * PIXEL_RATE} style={{ marginTop: 2, color: 'white', backgroundColor: 'rgba(0,0,0,0)' }} />
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                activeOpacity={1}
+                            <View style={styles.optionContainer}>
+                                <TouchableOpacity
+                                    activeOpacity={1}
+                                    onPress={() => {
+                                        this.props.experience.setCurrentTab(1);
+                                    }}
+                                    style={this.props.experience.currentTab === 1 ?
+                                    styles.activeTabButton
+                                    : styles.inactiveTabButton}
+                                >
+                                    <Text style={{
+                                        fontSize: 16,
+                                        color: "white",
+                                    }}>体验</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    activeOpacity={1}
+                                    onPress={() => {
+                                        this.props.experience.setCurrentTab(2);
+                                    }}
+                                    style={this.props.experience.currentTab === 2 ?
+                                    styles.activeTabButton
+                                    : styles.inactiveTabButton}
+                                >
+                                    <Text style={{
+                                        fontSize: 16,
+                                        color: "white",
+                                    }}>评论</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={styles.coverDetail}>
+                            <Text style={styles.experienceTitle}>{this.props.experience.detail.data.experience_title}</Text>
+                            <Text style={styles.description}>{this.props.experience.detail.data.experience_brief_decription}</Text>
+                            <Text style={styles.autor}>by{this.props.experience.detail.data.experience_author}</Text>
+                        </View>
+                    </ImageBackground>
+
+                    <View style={styles.tagsContainer}>
+                        {this.rendTags()}
+                    </View>
+
+                    <View style={styles.recommend}>
+                        <Text style={styles.title}>我为什么推荐</Text>
+                        <View style={styles.recomendDetail}>
+                            <Image source={{ uri: 'https://img-blog.csdn.net/20180528164959640'}} style={styles.autorProfile} />
+                            <Text style={[styles.context, {
+                                marginLeft: 15 * PIXEL_RATE,
+                                width: 236 * PIXEL_RATE,}]
+                            }>{this.props.experience.detail.data.recommend_reason}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.seperator} />
+                    
+                    <View style={styles.introduction}>
+                        <Text style={styles.title}>体验介绍</Text>
+                        <Image source={{ uri: 'https://img-blog.csdn.net/20180528173335773'}} style={styles.introductionImage}/>
+                        <Text style={[
+                                    styles.context, {
+                                    marginHorizontal: 44 * PIXEL_RATE,
+                                    marginTop: 19 * PIXEL_RATE,
+                            }]} 
+                            numberOfLines={this.props.experience.introductionFold ? 5 : 100}
+                        >{this.props.experience.detail.data.experience_introduction}</Text>
+                        <View style={styles.foldOrExpand}>
+                            <View style={{flex: 1}} />
+                            <TouchableOpacity 
                                 onPress={() => {
-                                    this.props.experience.setCurrentTab(2);
-                                }}
-                                style={this.props.experience.currentTab === 2 ?
-                                styles.activeTabButton
-                                : styles.inactiveTabButton}
+                                    this.props.experience.introductionFold = !this.props.experience.introductionFold
+                                }} 
+                                style={{flexDirection: 'row',}}
                             >
-                                <Text style={{
-                                    fontSize: 16,
-                                    color: "white",
-                                }}>评论</Text>
+                                <Text style={styles.context}
+                                >{this.props.experience.introductionFold ? "展开" : "收起"}</Text>
+                                <Ionicons name={this.props.experience.introductionFold ? 'ios-arrow-down' : 'ios-arrow-up'} style={{margin: 2,}} size={20 * PIXEL_RATE}/>
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={styles.coverDetail}>
-                        <Text style={styles.experienceTitle}>{this.props.experience.detail.data.experience_title}</Text>
-                        <Text style={styles.description}>{this.props.experience.detail.data.experience_brief_decription}</Text>
-                        <Text style={styles.autor}>by{this.props.experience.detail.data.experience_author}</Text>
-                    </View>
-                </ImageBackground>
+                    <View style={styles.seperator} />
 
-                <View style={styles.tagsContainer}>
-                    {this.rendTags()}
-                </View>
-
-                <View style={styles.recommend}>
-                    <Text style={styles.title}>我为什么推荐</Text>
-                    <View style={styles.recomendDetail}>
-                        <Image source={{ uri: 'https://img-blog.csdn.net/20180528164959640'}} style={styles.autorProfile} />
-                        <Text style={[styles.context, {
-                            marginLeft: 15 * PIXEL_RATE,
-                            width: 236 * PIXEL_RATE,}]
-                        }>{this.props.experience.detail.data.recommend_reason}</Text>
-                    </View>
-                </View>
-                <View style={styles.seperator} />
-                
-                <View style={styles.introduction}>
-                    <Text style={styles.title}>体验介绍</Text>
-                    <Image source={{ uri: 'https://img-blog.csdn.net/20180528173335773'}} style={styles.introductionImage}/>
-                    <Text style={[
-                                styles.context, {
+                    <View style={styles.importanceInformation}>
+                        <Text style={styles.title}>重点信息</Text>
+                        <Text style={[
+                            styles.context, {
                                 marginHorizontal: 44 * PIXEL_RATE,
-                                marginTop: 19 * PIXEL_RATE,
-                        }]} 
-                        numberOfLines={this.props.experience.introductionFold ? 5 : 100}
-                    >{this.props.experience.detail.data.experience_introduction}</Text>
-                    <View style={styles.foldOrExpand}>
-                        <View style={{flex: 1}} />
-                        <TouchableOpacity 
-                            onPress={() => {
-                                this.props.experience.introductionFold = !this.props.experience.introductionFold
-                            }} 
-                            style={{flexDirection: 'row',}}
-                        >
-                            <Text style={styles.context}
-                            >{this.props.experience.introductionFold ? "展开" : "收起"}</Text>
-                            <Ionicons name={this.props.experience.introductionFold ? 'ios-arrow-down' : 'ios-arrow-up'} style={{margin: 2,}} size={20 * PIXEL_RATE}/>
-                        </TouchableOpacity>
+                            }]} 
+                        >{this.props.experience.detail.data.stress_infomation}
+                        </Text>
                     </View>
-                </View>
-                <View style={styles.seperator} />
 
-                <View style={styles.importanceInformation}>
-                    <Text style={styles.title}>重点信息</Text>
-                    <Text style={[
-                        styles.context, {
-                            marginHorizontal: 44 * PIXEL_RATE,
-                        }]} 
-                    >{this.props.experience.detail.data.stress_infomation}
-                    </Text>
-                </View>
-
-                <View style={styles.nearbyExperience}>
-                    <View style={styles.nearbyHeader}>
-                        <View style={[styles.seperator, {width: 109 * PIXEL_RATE}]} />
-                        <Text style={{fontSize: 16, marginTop: 30,}}>附近体验</Text>
-                        <View style={[styles.seperator, { width: 109 * PIXEL_RATE }]} />
+                    <View style={styles.nearbyExperience}>
+                        <View style={styles.nearbyHeader}>
+                            <View style={[styles.seperator, {width: 109 * PIXEL_RATE}]} />
+                            <Text style={{fontSize: 16, marginTop: 30,}}>附近体验</Text>
+                            <View style={[styles.seperator, { width: 109 * PIXEL_RATE }]} />
+                        </View>
+                        <View style={styles.nearbyContext}>
+                            {this.props.experience.detail.data.nearby_experience.map((item, index) => {
+                                return <Item title={item.experience_title}
+                                            description={item.experience_brief_discription} 
+                                            name={item.feature}
+                                            photo='https://img-blog.csdn.net/20180528173335773'
+                                            id={item.experience_id}
+                                            navigation={this.props.navigation}
+                                            experience={this.props.experience} 
+                                            key={index} 
+                                        />
+                            })}
+                        </View>
                     </View>
-                    <View style={styles.nearbyContext}>
-                        {this.props.experience.detail.data.nearby_experience.map((item, index) => {
-                            return <Item title={item.experience_title}
-                                        description={item.experience_brief_discription} 
-                                        name={item.feature}
-                                        photo='https://img-blog.csdn.net/20180528173335773'
-                                        id={item.experience_id}
-                                        navigation={this.props.navigation}
-                                        experience={this.props.experience} 
-                                        key={index} 
-                                    />
-                        })}
-                    </View>
-                </View>
+                </ScrollView>
 
-                <View style={styles.bottomBar}>
-                </View>
-
-  
-            </ScrollView>
+                <Animated.View style={[ styles.bottomBar, {opacity: this.state.opacityAnima, bottom: this.state.bottomAnima }]}>
+                </Animated.View>
+            </View>
         )
     }
 }
@@ -296,6 +381,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(245, 245, 245, 1)',
         justifyContent: 'center',
         alignContent: 'center',
+        marginBottom: 45 * PIXEL_RATE,
     },
     nearbyHeader: {
         flexDirection: 'row',
@@ -313,8 +399,9 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width,
         height: 45 * PIXEL_RATE,
         backgroundColor: 'grey',
-        position: 'absolute',
-        bottom: 0,
+        position:'absolute',
+        
+        
     }
 
 });
