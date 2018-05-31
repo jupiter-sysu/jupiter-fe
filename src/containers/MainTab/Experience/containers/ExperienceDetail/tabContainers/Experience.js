@@ -4,6 +4,7 @@ import { inject, observer, } from 'mobx-react';
 import styled from 'styled-components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Item from '../../../component/Item'
+import { THEME_PRIMARY_COLOR } from '../../../../../../common-style/theme'
 
 const PIXEL_RATE = Dimensions.get('screen').width / 375;
 const PIXEL_RATE_Y = Dimensions.get('screen').height / 667;
@@ -20,11 +21,14 @@ class Experience extends Component {
             opacityAnima: new Animated.Value(1),
             bottomAnima: new Animated.Value(0),
             scrollY: 0,
-            bottomBarVisible: true
+            bottomBarVisible: true,
+            heartName: 'ios-heart-outline',
+            heartColor: 'black',
         }
 
         this.beginDrag = this.beginDrag.bind(this);
         this.endDrag = this.endDrag.bind(this);
+        this.handleLike = this.handleLike.bind(this);
     }
 
     componentDidMount() {
@@ -95,6 +99,20 @@ class Experience extends Component {
             scrollY: e.nativeEvent.contentOffset.y,
         })
         console.log(this.state.scrollY);
+    }
+
+    handleLike() {
+        if (this.state.heartName == 'ios-heart') {
+            this.setState({
+                heartName: 'ios-heart-outline',
+                heartColor: 'black',
+            })
+        } else {
+            this.setState({
+                heartName: 'ios-heart',
+                heartColor: THEME_PRIMARY_COLOR,
+            })
+        }
     }
 
     render() {
@@ -241,6 +259,40 @@ class Experience extends Component {
                 </ScrollView>
 
                 <Animated.View style={[ styles.bottomBar, {opacity: this.state.opacityAnima, bottom: this.state.bottomAnima }]}>
+                    <TouchableOpacity 
+                        style={{marginLeft: 30 * PIXEL_RATE,}}
+                        onPress={() => {
+                            this.props.navigation.goBack();
+                        }}
+                    >
+                        <Ionicons name='ios-arrow-back' size={25 * PIXEL_RATE} color={'black'}/>
+                    </TouchableOpacity>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', marginRight: 20 * PIXEL_RATE,}} >
+                        <TouchableOpacity
+                            onPress={() => {
+                                console.log("like");
+                            }}
+                            style={{marginHorizontal: 11 * PIXEL_RATE,}}
+                        >
+                            {/* <Text style={{fontSize: 10, position: 'absolute', left: 20 * PIXEL_RATE, top: -5 * PIXEL_RATE,}}> 56 </Text> */}
+                            <Ionicons name="ios-create-outline" size={25 * PIXEL_RATE} color={'black'} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={this.handleLike}
+                            style={{ marginHorizontal: 11 * PIXEL_RATE, }}
+                        >
+                            <Ionicons name={this.state.heartName} size={25 * PIXEL_RATE} color={this.state.heartColor} />
+                            <Text style={{ fontSize: 10, position: 'absolute', left: 20 * PIXEL_RATE, top: -5 * PIXEL_RATE, }}> 127 </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => {
+                                console.log("like");
+                            }}
+                            style={{ marginHorizontal: 11 * PIXEL_RATE, }}
+                        >
+                            <Ionicons name="ios-share-outline" size={25 * PIXEL_RATE} color={'black'} />
+                        </TouchableOpacity>
+                    </View>
                 </Animated.View>
             </View>
         )
@@ -398,10 +450,11 @@ const styles = StyleSheet.create({
     bottomBar: {
         width: Dimensions.get('window').width,
         height: 45 * PIXEL_RATE,
-        backgroundColor: 'grey',
+        backgroundColor: 'white',
         position:'absolute',
-        
-        
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     }
 
 });
