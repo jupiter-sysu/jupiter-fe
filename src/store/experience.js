@@ -17,7 +17,7 @@ class experienceSotre {
     @observable modalVisible = false;
     @observable searchValue = '';
     @observable searchHistory=[];
-    @observable currentTab = 2;
+    @observable currentTab = 1;
 
     @observable isLike = false;
     @observable commentID = 0;
