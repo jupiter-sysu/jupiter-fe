@@ -13,6 +13,10 @@ class experienceSotre {
     @observable currentData = null;
     @observable showOriginalSearchBar = true;
     @observable currentExperienceID = '';
+
+    @observable modalVisible = false;
+    @observable searchValue = '';
+    @observable searchHistory=[];
     @observable currentTab = 2;
 
     @observable isLike = false;
@@ -33,6 +37,26 @@ class experienceSotre {
         this.commentID = id;
     }
 
+    @action.bound
+    changeSearchValue(value) {
+        this.searchValue = value;
+    }
+
+    @action.bound
+    clearHistory() {
+        this.searchHistory = [];
+    }
+
+    @action.bound
+    handleSearch() {
+        this.searchHistory=this.searchHistory.concat({name: this.searchValue, type: 'search'});
+    }
+
+    @action.bound
+    setModalVisible(status) {
+        this.modalVisible = status;
+    }
+    
     @action.bound
     setCurrentTab(id) {
         this.currentTab = id;

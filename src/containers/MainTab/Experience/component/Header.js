@@ -12,11 +12,15 @@ const Header = ({
 }) => {
   return (
     <View style={{ }}>
-      <Image source={{ uri: photo }} style={styles.headerPic} />
+      <Image
+        defaultSource={require('../../../../app-assets/loading/loading.16.9.png')}
+        source={{ uri: photo }}
+        style={styles.headerPic}
+      />
       {experience.showOriginalSearchBar ?
         <TouchableOpacity
           onPress={() => {
-
+            experience.setModalVisible(true);
         }}
           activeOpacity={1}
           style={

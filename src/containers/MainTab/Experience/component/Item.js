@@ -31,7 +31,7 @@ const OverflowText = styled.Text`
 const PIXEL_RATE = Dimensions.get('screen').width / 375;
 
 const Item = ({
-  title, description, name, photo, id, navigation, experience
+  title, description, name, photo, id, navigation, experience,
 }) => (
   <TouchableOpacity
     activeOpacity={1}
@@ -43,7 +43,11 @@ const Item = ({
     style={styles.itemContainer}
   >
     <OverflowText>{name}</OverflowText>
-    <Image source={{ uri: photo }} style={styles.itemPic} />
+    <Image
+      source={{ uri: photo }}
+      style={styles.itemPic}
+      defaultSource={require('../../../../app-assets/loading/loading.16.9.png')}
+    />
     <ItemTitle>{title}</ItemTitle>
     <ItemSubtitle>{description}</ItemSubtitle>
   </TouchableOpacity>
