@@ -5,6 +5,10 @@ import styled from 'styled-components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Item from '../../../component/Item'
 import { THEME_PRIMARY_COLOR } from '../../../../../../common-style/theme'
+import MCSpinner from '../../../../../../component/Feedback/MCSpinner';
+import CHParagraph from '../component/CHParagraph'
+import CHSection from "../component/CHSection";
+import CHKeyInformation from '../component/CHKeyInformation';
 
 const PIXEL_RATE = Dimensions.get('screen').width / 375;
 const PIXEL_RATE_Y = Dimensions.get('screen').height / 667;
@@ -18,44 +22,40 @@ class Experience extends Component {
     constructor(props) {
         super(props);
         this.state = {
+
+            // 底部导航栏隐藏动画 透明度和距离参数
             opacityAnima: new Animated.Value(1),
             bottomAnima: new Animated.Value(0),
-            scrollY: 0,
+
+            // 底部导航栏是否可见
             bottomBarVisible: true,
+
+            // 点赞图标样式
             heartName: 'ios-heart-outline',
             heartColor: 'black',
-        }
 
-        this.beginDrag = this.beginDrag.bind(this);
+            // 收藏图标样式
+            starColor: 'black',
+            starName: 'ios-star-outline',
+        }
         this.endDrag = this.endDrag.bind(this);
         this.handleLike = this.handleLike.bind(this);
+        this.handleStar = this.handleStar.bind(this);
     }
 
     componentDidMount() {
         // 请求资源
         this.props.experience.loadExperiencePage();
-
     }
 
-    rendTags() {
-        return this.props.experience.detail.data.tags.map((item) => {
-            return <Text style={styles.tags} key={item}>{item}</Text>
-        });
-    }
-
-    beginDrag = (e) => {
-        console.log("beginDrag: " + e.nativeEvent.contentOffset.y);
-    }
-
+    // 用于处理滚动 隐藏显示导航栏
     endDrag = (e) => {
-        console.log("endDrag: " + e.nativeEvent.contentOffset.y)
-        this.setState({
-            scrollY: e.nativeEvent.contentOffset.y
-        })
+        this.props.experience.scrollY = e.nativeEvent.contentOffset.y
     }
 
+    // 处理滚动时, 触发隐藏展示底部导航栏
     handleScroll = (e) => {
-        if (this.state.bottomBarVisible && e.nativeEvent.contentOffset.y - this.state.scrollY > 30) {
+        if (this.state.bottomBarVisible && e.nativeEvent.contentOffset.y - this.props.experience.scrollY > 30) {
             Animated.parallel([
                 Animated.timing(
                     this.state.opacityAnima,
@@ -73,7 +73,7 @@ class Experience extends Component {
             this.setState({
                 bottomBarVisible: false
             })
-        } else if (!this.state.bottomBarVisible && e.nativeEvent.contentOffset.y - this.state.scrollY < -20) {
+        } else if (!this.state.bottomBarVisible && e.nativeEvent.contentOffset.y - this.props.experience.scrollY < -20) {
             Animated.parallel([
                 Animated.timing(
                     this.state.opacityAnima,
@@ -94,13 +94,7 @@ class Experience extends Component {
         } 
     }
 
-    endScroll = (e) => {
-        this.setState({
-            scrollY: e.nativeEvent.contentOffset.y,
-        })
-        console.log(this.state.scrollY);
-    }
-
+    // 处理点赞
     handleLike() {
         if (this.state.heartName == 'ios-heart') {
             this.setState({
@@ -115,31 +109,96 @@ class Experience extends Component {
         }
     }
 
+    // 处理收藏
+    handleStar() {
+        if (this.state.starName == 'ios-star') {
+            this.setState({
+                starName: 'ios-star-outline',
+                starColor: 'black',
+            })
+        } else {
+            this.setState({
+                starName: 'ios-star',
+                starColor: THEME_PRIMARY_COLOR,
+            })
+        }
+    }
+
+    // 渲染体验介绍文章
+    renderIntroduction = (intro) => {
+        let introduction = intro.toString()
+        let body = [];
+        let pattern = /\[img\]\((.*?)\)/gm;
+        var parentWidth = Dimensions.get('window').width * 0.86;
+        var parentHeight = 200;
+
+        while (1) {
+            let before = pattern.lastIndex;
+            var match = pattern.exec(introduction);
+            if (match == null) {
+                // 最后的文字图片
+                body.push(
+                    <Text style={styles.context} key={before}>
+                        {"       " + introduction.slice(before)}
+                    </Text>
+                )
+                break;
+            }
+
+            // 匹配到的段落,要检查是否为空 渲染文字
+            if (introduction.slice(before, match.index)) {
+                body.push(
+                    <Text style={styles.context} key={match.index}>
+                        {"       " + introduction.slice(before, match.index)}
+                    </Text>
+                )
+            }
+
+            // 匹配到的地址 xxxxx 渲染图片
+            Image.getSize(match[1], (sonWidth, sonHeight) => {
+                
+                console.log("sonwidth: " + sonWidth + " sonheig: " + sonHeight + " parentHeight : " + parentHeight)
+            })
+            console.log(" parentHeight : " + parentHeight)
+            body.push(
+                <Image 
+                    source={{ uri: match[1] }} 
+                    style={{ marginVertical: 17 * PIXEL_RATE_Y, 
+                            width: parentWidth, 
+                            height: parentHeight,
+                    }} 
+                    key={match[1]} />
+            )
+        }
+        return body;
+    }
+
     render() {
         if (this.props.experience.detailPageIniting == true) {
-            return <View>
-                
-            </View>
+            // 初始页面显示时,显示菊花图
+            return (
+                <View style={{justifyContent: 'center', alignContent: 'center',}}>
+                    <MCSpinner isVisible={this.props.experience.detailPageIniting} type="no-background" />
+                </View>
+            )
         } else 
         return (
+            // 请求数据到达后显示玩法页面
             <View style={styles.container}>
                 <ScrollView
                     onScroll={this.handleScroll}
-                    onScrollBeginDrag={this.beginDrag}
                     onScrollEndDrag={this.endDrag}
                     onMomentumScrollEnd={(e) => {
-                        console.log("momentScrollend: " + e.nativeEvent.contentOffset.y)
-                        this.setState({
-                            scrollY: e.nativeEvent.contentOffset.y
-                        })
+                            this.props.experience.scrollY = e.nativeEvent.contentOffset.y;
                     }}
                     scrollEventThrottle={16}
+                    contentContainerStyle={{ alignItems: 'center'}}
                 >
-                    <ImageBackground source={{ uri: "https://img-blog.csdn.net/20180528134720418" }} style={styles.cover}>
+                    {/* 封面页面 */}
+                    <ImageBackground source={{ uri: this.props.experience.detail.cover_img }} style={styles.cover}>
                         <View style={styles.Headercontainer}>
                             <TouchableOpacity
                                 onPress={() => {
-                                    console.log('hi', this.props.navigation.goBack);
                                     this.props.navigation.goBack();
                                 }}
                                 style={styles.backIcon}
@@ -178,64 +237,49 @@ class Experience extends Component {
                             </View>
                         </View>
                         <View style={styles.coverDetail}>
-                            <Text style={styles.experienceTitle}>{this.props.experience.detail.data.experience_title}</Text>
-                            <Text style={styles.description}>{this.props.experience.detail.data.experience_brief_decription}</Text>
-                            <Text style={styles.autor}>by{this.props.experience.detail.data.experience_author}</Text>
+                            <Text style={styles.experienceTitle}>{this.props.experience.detail.experience_title}</Text>
+                            <Text style={styles.description}>{this.props.experience.detail.experience_brief_decription}</Text>
+                            <Text style={styles.autor}>by{this.props.experience.detail.experience_author}</Text>
                         </View>
                     </ImageBackground>
-
-                    <View style={styles.tagsContainer}>
-                        {this.rendTags()}
-                    </View>
-
-                    <View style={styles.recommend}>
-                        <Text style={styles.title}>我为什么推荐</Text>
-                        <View style={styles.recomendDetail}>
-                            <Image source={{ uri: 'https://img-blog.csdn.net/20180528164959640'}} style={styles.autorProfile} />
-                            <Text style={[styles.context, {
-                                marginLeft: 15 * PIXEL_RATE,
-                                width: 236 * PIXEL_RATE,}]
-                            }>{this.props.experience.detail.data.recommend_reason}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.seperator} />
                     
-                    <View style={styles.introduction}>
-                        <Text style={styles.title}>体验介绍</Text>
-                        <Image source={{ uri: 'https://img-blog.csdn.net/20180528173335773'}} style={styles.introductionImage}/>
-                        <Text style={[
-                                    styles.context, {
-                                    marginHorizontal: 44 * PIXEL_RATE,
-                                    marginTop: 19 * PIXEL_RATE,
-                            }]} 
-                            numberOfLines={this.props.experience.introductionFold ? 5 : 100}
-                        >{this.props.experience.detail.data.experience_introduction}</Text>
-                        <View style={styles.foldOrExpand}>
-                            <View style={{flex: 1}} />
-                            <TouchableOpacity 
-                                onPress={() => {
-                                    this.props.experience.introductionFold = !this.props.experience.introductionFold
-                                }} 
-                                style={{flexDirection: 'row',}}
-                            >
-                                <Text style={styles.context}
-                                >{this.props.experience.introductionFold ? "展开" : "收起"}</Text>
-                                <Ionicons name={this.props.experience.introductionFold ? 'ios-arrow-down' : 'ios-arrow-up'} style={{margin: 2,}} size={20 * PIXEL_RATE}/>
-                            </TouchableOpacity>
-                        </View>
+                    {/* 标签 */}
+                    <View style={styles.tagsContainer}>
+                        {this.props.experience.detail.tags.map((item) => {
+                            return <Text style={styles.tags} key={item}>{item}</Text>
+                        })}
                     </View>
-                    <View style={styles.seperator} />
+                    
+                    {/* 我为什么推荐 */}
+                    <CHSection title="我为什么推荐" containerStyle={{ flexDirection: 'row', }}>
+                        <Image 
+                            source={{ uri: this.props.experience.detail.author_profile_img }} 
+                            style={{
+                                width: 49 * PIXEL_RATE,
+                                height: 49 * PIXEL_RATE,
+                                borderRadius: 24.5 * PIXEL_RATE,
+                                marginLeft: 10 * PIXEL_RATE,
+                            }} 
+                        />
+                        <Text 
+                            style={[styles.context, {
+                                marginLeft: 15 * PIXEL_RATE,
+                                width: 236 * PIXEL_RATE,
+                            }]
+                        }>{this.props.experience.detail.recommend_reason}</Text>
+                    </CHSection>
+                    
+                    {/* 体验介绍 */}
+                    <CHSection title="体验介绍">
+                        {this.renderIntroduction(this.props.experience.detail.experience_introduction)}
+                    </CHSection>
 
-                    <View style={styles.importanceInformation}>
-                        <Text style={styles.title}>重点信息</Text>
-                        <Text style={[
-                            styles.context, {
-                                marginHorizontal: 44 * PIXEL_RATE,
-                            }]} 
-                        >{this.props.experience.detail.data.stress_infomation}
-                        </Text>
-                    </View>
+                    {/* 重点信息 */}
+                    <CHSection title="重点信息" seperatorStyle={{ display: 'none',}}>
+                        <CHKeyInformation text={this.props.experience.detail.stress_information} />
+                    </CHSection>
 
+                    {/* 附近体验  */}
                     <View style={styles.nearbyExperience}>
                         <View style={styles.nearbyHeader}>
                             <View style={[styles.seperator, {width: 109 * PIXEL_RATE}]} />
@@ -243,11 +287,11 @@ class Experience extends Component {
                             <View style={[styles.seperator, { width: 109 * PIXEL_RATE }]} />
                         </View>
                         <View style={styles.nearbyContext}>
-                            {this.props.experience.detail.data.nearby_experience.map((item, index) => {
+                            {this.props.experience.detail.nearby_experience.map((item, index) => {
                                 return <Item title={item.experience_title}
                                             description={item.experience_brief_discription} 
                                             name={item.feature}
-                                            photo='https://img-blog.csdn.net/20180528173335773'
+                                            photo={item.card_img}
                                             id={item.experience_id}
                                             navigation={this.props.navigation}
                                             experience={this.props.experience} 
@@ -258,23 +302,24 @@ class Experience extends Component {
                     </View>
                 </ScrollView>
 
+                {/* 底部导航栏 */}
                 <Animated.View style={[ styles.bottomBar, {opacity: this.state.opacityAnima, bottom: this.state.bottomAnima }]}>
                     <TouchableOpacity 
                         style={{marginLeft: 30 * PIXEL_RATE,}}
                         onPress={() => {
-                            this.props.navigation.goBack();
+                            // this.props.navigation.goBack();
+                            let rever = !this.state.bottomBarVisible
+                            this.setState({
+                                bottomBarVisible: rever
+                            })
                         }}
                     >
                         <Ionicons name='ios-arrow-back' size={25 * PIXEL_RATE} color={'black'}/>
                     </TouchableOpacity>
                     <View style={{flexDirection: 'row', justifyContent: 'space-between', marginRight: 20 * PIXEL_RATE,}} >
                         <TouchableOpacity
-                            onPress={() => {
-                                console.log("like");
-                            }}
                             style={{marginHorizontal: 11 * PIXEL_RATE,}}
                         >
-                            {/* <Text style={{fontSize: 10, position: 'absolute', left: 20 * PIXEL_RATE, top: -5 * PIXEL_RATE,}}> 56 </Text> */}
                             <Ionicons name="ios-create-outline" size={25 * PIXEL_RATE} color={'black'} />
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -283,6 +328,12 @@ class Experience extends Component {
                         >
                             <Ionicons name={this.state.heartName} size={25 * PIXEL_RATE} color={this.state.heartColor} />
                             <Text style={{ fontSize: 10, position: 'absolute', left: 20 * PIXEL_RATE, top: -5 * PIXEL_RATE, }}> 127 </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={this.handleStar}
+                            style={{ marginHorizontal: 11 * PIXEL_RATE, }}
+                        >
+                            <Ionicons name={this.state.starName} size={25 * PIXEL_RATE} color={this.state.starColor} />
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => {
@@ -304,7 +355,8 @@ export default Experience;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        alignItems: 'center',
+        backgroundColor: '#fff',
     },
     cover: {
         width: Dimensions.get('window').width,
@@ -378,9 +430,10 @@ const styles = StyleSheet.create({
     },
     tagsContainer: {
         marginTop: 20,
-        marginHorizontal: 16,
         flexDirection: 'row',
         flexWrap: 'wrap',
+        width: '100%',
+        paddingHorizontal: 5,
     },
     tags: {
         margin: 4,
@@ -430,7 +483,7 @@ const styles = StyleSheet.create({
     },
     nearbyExperience: {
         width: Dimensions.get('window').width,
-        backgroundColor: 'rgba(245, 245, 245, 1)',
+        backgroundColor: '#f5f5f5',
         justifyContent: 'center',
         alignContent: 'center',
         marginBottom: 45 * PIXEL_RATE,

@@ -14,9 +14,7 @@ class experienceSotre {
     @observable showOriginalSearchBar = true;
     @observable currentExperienceID = '';
     @observable currentTab = 1;
-    @observable introductionFold = true;
-    @observable detailPageIniting = true;
-    @observable detail = null;
+    
 
     @action.bound
     setCurrentTab(id) {
@@ -68,22 +66,6 @@ class experienceSotre {
     }
 
     @action.bound
-    async loadExperiencePage() {
-        this.detailPageIniting = true;
-        try {
-            const data = await sPost('https://dsn.apizza.net/mock/d219e15359947f0ce7411b7b91fd5668/experience/detail', {
-                experience_id: this.currentExperienceID
-            });
-            this.detail = data;
-            console.log(data, 'test');
-        } catch (err) {
-            Toast.info(err.message, 2);
-        } finally {
-            this.detailPageIniting = false;
-        }
-    }
-
-    @action.bound
     setStatusBar(style) {
         this.statusBarStyle = style;
     }
@@ -110,6 +92,32 @@ class experienceSotre {
         });
         return result;
     }
+
+    // 玩法页数据
+    @observable introductionFold = true;
+    @observable detailPageIniting = true;
+    @observable scrollY = 0;
+    @observable like = false;
+    @observable detail = null;
+
+    @action.bound
+    async loadExperiencePage() {
+        this.detailPageIniting = true;
+        try {
+            const {data} = await sPost('https://dsn.apizza.net/mock/d219e15359947f0ce7411b7b91fd5668/experience/detail', {
+                experience_id: this.currentExperienceID
+            });
+            this.detail = data;
+            console.log(data, 'test');
+        } catch (err) {
+            Toast.info(err.message, 2);
+        } finally {
+            this.detailPageIniting = false;
+        }
+    }
+
+
+
 
 
 
