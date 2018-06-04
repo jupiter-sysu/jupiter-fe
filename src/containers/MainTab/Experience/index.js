@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Image, StyleSheet, StatusBar, ScrollView, Dimensions, TextInput, TouchableOpacity, SectionList, Animated, } from 'react-native';
+import { Text, View, Image, StyleSheet, StatusBar, ScrollView, Dimensions, Modal, TextInput, TouchableOpacity, SectionList, Animated, FlatList } from 'react-native';
 import { inject, observer } from 'mobx-react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styled from 'styled-components';
@@ -165,6 +165,82 @@ class Experience extends Component {
      return (
 		<View style={styles.container}>
        <StatusBar barStyle={this.props.tab.statusBarStyle} />
+       <Modal
+           animationType="slide"
+           transparent={false}
+           visible={this.props.experience.modalVisible}
+           onRequestClose={() => {
+             alert('Modal has been closed.');
+           }}>
+           <View style={styles.modalHeaderContainer}>
+              <TouchableOpacity onPress={() => {
+                this.props.experience.setModalVisible(false);
+              }}>
+                 <Ionicons name='ios-arrow-back' size={30 * PIXEL_RATE} style={{marginTop: 2, marginRight: 10, color: 'black', backgroundColor: 'rgba(0,0,0,0)'}} />
+              </TouchableOpacity>
+              <TextInput
+                onSubmitEditing={() => {
+                  this.props.experience.handleSearch();
+                }}
+                returnKeyType="search"
+                clearButtonMode="while-editing"
+                value={this.props.experience.searchValue.slice}
+                onChangeText={(text) => this.props.experience.changeSearchValue(text)}
+                underlineColorAndroid='transparent' 
+                autoFocus={true}
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  size: 14,
+                  paddingLeft: 10,
+                  width: 312,
+                  height: 34,
+                }}
+               placeholder="搜索目的地、玩法"
+              />
+           </View>
+           <FlatList
+            ListFooterComponent={() => {
+              console.log(this.props.experience.searchHistory.slice());
+              if (this.props.experience.searchHistory.slice().length !== 0) {
+                return (
+                  <TouchableOpacity 
+                    onPress={() => {
+                      this.props.experience.clearHistory();
+                    }}
+                    style={{
+                    width: '100%',
+                    height: 50,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderBottomWidth: 1,
+                    borderColor: '#F8F8F8',
+                  }}>
+                    <Text style={{
+                      fontSize: 16,
+                      color: 'purple',
+                    }}>清空历史记录</Text>
+                  </TouchableOpacity>
+                );
+              }
+              return null;
+            }}
+            data={this.props.experience.searchHistory}
+            renderItem={({item}) => (
+              <TouchableOpacity style={{
+                width: '100%',
+                height: 50,
+                justifyContent: 'center',
+                paddingLeft: 30,
+                borderBottomWidth: 1,
+                borderColor: '#F8F8F8',
+              }}>
+                <Text style={{
+                  fontSize: 16,
+                }}>{item.name}</Text>
+              </TouchableOpacity>
+          )}
+           />
+        </Modal>
        <Animated.View style={{
          backgroundColor: interpolatedColor,
          width: '100%',
@@ -175,14 +251,10 @@ class Experience extends Component {
        }} />
          {this.props.experience.showHeaderSearchBar ? 
            <TouchableOpacity
-             onPress={() => {
-
-             }}
              activeOpacity={1}
              style={{
                zIndex: 100,
                alignItems: 'center',
-               
               //  shadowOffset: { width: 0, height: 0 },
               //  shadowColor: 'black',
               //  shadowOpacity: .3,
@@ -198,27 +270,38 @@ class Experience extends Component {
                  shadowColor: 'black',
                  shadowOpacity: .2,
                  elevation: 3,
-                
                }]}
              >
-               <Animated.View style={{
-                 borderWidth: .5,
-                 borderColor: interpolatedBorderColor,
-                 width: '90%',
-                 height: '70%',
-                 borderRadius: 20,
-                 paddingLeft: 13 * PIXEL_RATE,
-                 justifyContent: 'flex-start',
-                 alignItems: 'center',
-                 flexDirection: 'row',
-                 position: 'relative',
-                 marginTop: interpolatedMT,
-               }}>
-                 <Ionicons name="ios-search" size={20} style={{ color: 'rgba(200, 200, 200, 1)', marginTop: 2 * PIXEL_RATE, marginRight: 10 * PIXEL_RATE }} />
-                 <Animated.Text style={{
-                   color: interpolatedTextColor
-                 }}>搜索目的地、体验</Animated.Text>
-               </Animated.View>
+                 <Animated.View style={{
+                   borderWidth: .5,
+                   borderColor: interpolatedBorderColor,
+                   width: '90%',
+                   height: '70%',
+                   borderRadius: 20,
+                   paddingLeft: 13 * PIXEL_RATE,
+                   justifyContent: 'flex-start',
+                   alignItems: 'center',
+                   flexDirection: 'row',
+                   position: 'relative',
+                   marginTop: interpolatedMT,
+                 }}>
+                 <TouchableOpacity
+                  onPress={() => {
+                    this.props.experience.setModalVisible(true);
+                    this.props.setStatusBar('dark-content');
+                  }}
+                  activeOpacity={1} 
+                  style={{
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    flex: 1,
+                 }}>
+                   <Ionicons name="ios-search" size={20} style={{ color: 'rgba(200, 200, 200, 1)', marginTop: 2 * PIXEL_RATE, marginRight: 10 * PIXEL_RATE }} />
+                   <Animated.Text style={{
+                     color: interpolatedTextColor
+                   }}>搜索目的地、体验</Animated.Text>
+                 </TouchableOpacity>
+                 </Animated.View>
              </Animated.View>
            </TouchableOpacity>
            : null
@@ -305,13 +388,6 @@ class Experience extends Component {
          sections={this.props.experience.section}
 				 keyExtractor={(item, index) => item + index}
 			 >
-        <Text style={{
-          color: 'red'
-        }}>笔记</Text>
-         <Text>笔记</Text>
-          <Text>笔记</Text>
-           <Text>笔记</Text>
-
        </SectionList>
 		</View> 
 		
@@ -383,6 +459,15 @@ const styles = StyleSheet.create({
     width: 350 * PIXEL_RATE,
     height: 140 * PIXEL_RATE,
   },
+  modalHeaderContainer: {
+    height: 64 * PIXEL_RATE,
+    width: '100%',
+    backgroundColor: '#F8F8F8',
+    paddingTop: 22,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
   
 });
 
