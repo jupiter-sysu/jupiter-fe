@@ -13,10 +13,29 @@ class experienceSotre {
     @observable currentData = null;
     @observable showOriginalSearchBar = true;
     @observable currentExperienceID = '';
-    @observable currentTab = 1;
+
     @observable modalVisible = false;
     @observable searchValue = '';
     @observable searchHistory=[];
+    @observable currentTab = 2;
+
+    @observable isLike = false;
+    @observable commentID = 0;
+    @observable isCommentIniting = false;
+    @observable currentComment = null;
+    @observable currentCommentReview = null;
+    @observable isCommentReviewIniting = false;
+    @observable currentComment_reviews = null;
+
+    @action.bound
+    toggleLikeStatus() {
+        this.isLike = !this.isLike;
+    }
+
+    @action.bound
+    setCommentID(id) {
+        this.commentID = id;
+    }
 
     @action.bound
     changeSearchValue(value) {
@@ -88,6 +107,37 @@ class experienceSotre {
     }
 
     @action.bound
+    async loadComment() {
+        this.isCommentIniting = true;
+        try{
+            const { data } = await sPost('https://dsn.apizza.net/mock/d219e15359947f0ce7411b7b91fd5668/experience/review');
+            console.log(data);
+            this.currentComment = data;
+            this.currentComment_reviews = data.reviews;
+        }catch(err){
+            Toast.info(err.message, 2);
+        }finally {
+            this.isCommentIniting = false;
+        }
+        
+    }
+
+    @action.bound
+    async loadCommentReview() {
+        this.isCommentReviewIniting = true;
+        try{
+            const { data } = await sPost('https://dsn.apizza.net/mock/d219e15359947f0ce7411b7b91fd5668/experience/review/comment_detail');
+            console.log(data);
+            this.currentCommentReview = data;
+        }catch(err){
+            Toast.info(err.message, 2);
+        }finally {
+            this.isCommentReviewIniting = false;
+        }
+        
+    }    
+
+    @action.bound
     setStatusBar(style) {
         this.statusBarStyle = style;
     }
@@ -114,6 +164,32 @@ class experienceSotre {
         });
         return result;
     }
+
+    // 玩法页数据
+    @observable introductionFold = true;
+    @observable detailPageIniting = true;
+    @observable scrollY = 0;
+    @observable like = false;
+    @observable detail = null;
+
+    @action.bound
+    async loadExperiencePage() {
+        this.detailPageIniting = true;
+        try {
+            const {data} = await sPost('https://dsn.apizza.net/mock/d219e15359947f0ce7411b7b91fd5668/experience/detail', {
+                experience_id: this.currentExperienceID
+            });
+            this.detail = data;
+            console.log(data, 'test');
+        } catch (err) {
+            Toast.info(err.message, 2);
+        } finally {
+            this.detailPageIniting = false;
+        }
+    }
+
+
+
 
 
 

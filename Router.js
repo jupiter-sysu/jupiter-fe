@@ -24,7 +24,8 @@ import ExperienceDetail from './src/containers/MainTab/Experience/containers/Exp
 import Note from './src/containers/MainTab/Note';
 import Schedule from './src/containers/MainTab/Schedule';
 import Mine from './src/containers/MainTab/Mine';
-
+import Comments from './src/containers/MainTab/Experience/containers/ExperienceDetail/tabContainers/comment/Comments.js';
+import CommentDetail from './src/containers/MainTab/Experience/containers/ExperienceDetail/tabContainers/comment/CommentDetail.js';
 //= =====================Test======================
 
 
@@ -327,6 +328,40 @@ export const Main = StackNavigator({
       },
     }),
   },
+  comments: {
+    screen: Comments,
+    navigationOptions: () => ({
+      title: '欢迎',
+      headerTintColor: 'white',
+      headerStyle: {
+        display: 'none',
+        backgroundColor: THEME_PRIMARY_COLOR,
+        borderBottomWidth: 0,
+        elevation: 0,
+      },
+      headerBackTitle: null,
+      headerTitleStyle: {
+        fontSize: 24,
+      },
+    }),
+  },
+  commentdetail: {
+    screen: CommentDetail,
+    navigationOptions: () => ({
+      title: '欢迎',
+      headerTintColor: 'white',
+      headerStyle: {
+        display: 'none',
+        backgroundColor: THEME_PRIMARY_COLOR,
+        borderBottomWidth: 0,
+        elevation: 0,
+      },
+      headerBackTitle: null,
+      headerTitleStyle: {
+        fontSize: 24,
+      },
+    }),
+  },
   experienceDetail: {
     screen: ExperienceDetail,
     navigationOptions: () => ({
@@ -345,7 +380,7 @@ export const Main = StackNavigator({
 }, {
   headerMode: 'float',
   mode: 'card',
-  initialRouteName: 'welcome',
+  initialRouteName: 'experienceDetail',
   transitionConfig: () => (Platform.OS === 'ios' ? {} : {
     screenInterpolator: (sceneProps) => {
       const { layout, position, scene } = sceneProps;
