@@ -36,6 +36,7 @@ const Item = ({
   <TouchableOpacity
     activeOpacity={1}
     onPress={() => {
+      experience.setCurrentTab(1);
       experience.setCurrentExperienceID(id);
       navigation.navigate('experienceDetail');
     }}

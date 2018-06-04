@@ -320,6 +320,7 @@ class Experience extends Component {
                         <TouchableOpacity
                             style={{marginHorizontal: 11 * PIXEL_RATE,}}
                         >
+
                             <Ionicons name="ios-create-outline" size={25 * PIXEL_RATE} color={'black'} />
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -368,7 +369,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
-        borderColor: 'red',
         position: 'absolute',
         top: 28 * PIXEL_RATE_Y,
     },
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
     inactiveTabButton: {
         width: 75,
         height: 36,
-        borderColor: 'black',
+        borderColor: 'white',
         borderRadius: 20,
         borderWidth: 0,
         justifyContent: 'center',
