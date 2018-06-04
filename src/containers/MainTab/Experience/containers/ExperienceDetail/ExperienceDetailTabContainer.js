@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import Experience from './tabContainers/Experience';
-import Comments from './tabContainers/Comments';
+import Comments from './tabContainers/comment/Comments';
 
 const PIXEL_RATE = Dimensions.get('screen').width / 375;
 const PIXEL_RATE_Y = Dimensions.get('screen').height / 667;

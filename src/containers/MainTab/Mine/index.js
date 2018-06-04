@@ -65,7 +65,7 @@ class Mine extends Component {
           </ImageBackground>
           <View style={styles.mycollection}>
               <Ionicons name="ios-star-outline" size={20 * PIXEL_RATE} style={{color: '#73C7EB', marginLeft: 19 * PIXEL_RATE}}/>
-              <Text style={{marginLeft: 14 * PIXEL_RATE}}>
+              <Text style={{marginLeft: 14 * PIXEL_RATE, fontSize: 14 * PIXEL_RATE}}>
                       我的收藏
               </Text>
               <Ionicons name="ios-arrow-forward" size={23 * PIXEL_RATE} style={{color: '#A1A1A1', position: 'absolute', marginLeft: 338 * PIXEL_RATE}}/>
@@ -73,21 +73,21 @@ class Mine extends Component {
           <View style={styles.myitems}>
               <View style={styles.items}>
                   <Ionicons name="ios-add-circle-outline" size={20 * PIXEL_RATE} style={{color: '#73C7EB', marginLeft: 19 * PIXEL_RATE}}/>
-                  <Text style={{marginLeft: 14 * PIXEL_RATE}}>
+                  <Text style={{marginLeft: 14 * PIXEL_RATE, fontSize: 14 * PIXEL_RATE}}>
                       我创建的体验
                   </Text>
                   <Ionicons name="ios-arrow-forward" size={23 * PIXEL_RATE} style={{color: '#A1A1A1', position: 'absolute', marginLeft: 338 * PIXEL_RATE}}/>
               </View>
               <View style={styles.items}>
                   <Ionicons name="ios-images-outline" size={17 * PIXEL_RATE} style={{color: '#73C7EB', marginLeft: 19 * PIXEL_RATE}}/>
-                  <Text style={{marginLeft: 15 * PIXEL_RATE}}>
+                  <Text style={{marginLeft: 15 * PIXEL_RATE, fontSize: 14 * PIXEL_RATE}}>
                       我的游记
                   </Text>
                   <Ionicons name="ios-arrow-forward" size={23 * PIXEL_RATE} style={{color: '#A1A1A1', position: 'absolute', marginLeft: 338 * PIXEL_RATE}}/>
               </View>
               <View style={styles.items}>
                   <Ionicons name="ios-text-outline" size={20 * PIXEL_RATE} style={{color: '#73C7EB', marginLeft: 19 * PIXEL_RATE}}/>
-                  <Text style={{marginLeft: 15 * PIXEL_RATE}}>
+                  <Text style={{marginLeft: 15 * PIXEL_RATE, fontSize: 14 * PIXEL_RATE}}>
                       我的点评
                   </Text>
                   <Ionicons name="ios-arrow-forward" size={23 * PIXEL_RATE} style={{color: '#A1A1A1', position: 'absolute', marginLeft: 338 * PIXEL_RATE}}/>
@@ -95,7 +95,7 @@ class Mine extends Component {
           </View>
           <View style={styles.configuration}>
               <Ionicons name="ios-settings-outline" size={20 * PIXEL_RATE} style={{color: '#73C7EB', marginLeft: 19 * PIXEL_RATE}}/>
-              <Text style={{marginLeft: 15 * PIXEL_RATE}}>
+              <Text style={{marginLeft: 15 * PIXEL_RATE, fontSize: 14 * PIXEL_RATE}}>
                       设置
               </Text>
               <Ionicons name="ios-arrow-forward" size={23 * PIXEL_RATE} style={{color: '#A1A1A1', position: 'absolute', marginLeft: 338 * PIXEL_RATE}}/>
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
       paddingTop: 4,
       color: '#FFF',
       textAlign: 'center',
-      fontSize: 14
+      fontSize: 14 * PIXEL_RATE
   },
   star: {
       flexDirection: 'row',
@@ -152,7 +152,8 @@ const styles = StyleSheet.create({
   },
   infotext: {
       color: '#FFF',
-      textAlign: 'center'
+      textAlign: 'center',
+      fontSize: 14 * PIXEL_RATE
   },
   mycollection: {
       flexDirection: 'row',

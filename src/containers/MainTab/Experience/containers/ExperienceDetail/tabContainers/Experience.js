@@ -43,7 +43,8 @@ class Experience extends Component {
                             : styles.inactiveTabButton}
                         >
                             <Text style={{
-                                fontSize: 16
+                                fontSize: 16,
+                                color: 'white'
                             }}>体验</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -56,8 +57,9 @@ class Experience extends Component {
                             : styles.inactiveTabButton}
                         >
                             <Text style={{
-                                fontSize: 16
-                            }}>评论</Text>
+                                fontSize: 16,
+                                color: 'white'
+                            }}>点评</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -82,7 +84,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
-        borderColor: 'red',
         position: 'absolute',
         top: 28 * PIXEL_RATE_Y,
     },
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
     activeTabButton: {
         width: 75,
         height: 36,
-        borderColor: 'black',
+        borderColor: 'white',
         borderRadius: 20,
         borderWidth: 1,
         justifyContent: 'center',
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
     inactiveTabButton: {
         width: 75,
         height: 36,
-        borderColor: 'black',
+        borderColor: 'white',
         borderRadius: 20,
         borderWidth: 0,
         justifyContent: 'center',
