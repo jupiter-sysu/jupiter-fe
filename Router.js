@@ -380,7 +380,7 @@ export const Main = StackNavigator({
 }, {
   headerMode: 'float',
   mode: 'card',
-  initialRouteName: 'welcome',
+  initialRouteName: 'experienceDetail',
   transitionConfig: () => (Platform.OS === 'ios' ? {} : {
     screenInterpolator: (sceneProps) => {
       const { layout, position, scene } = sceneProps;
