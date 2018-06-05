@@ -45,6 +45,9 @@ class Comments extends Component {
         return (
             <View style={styles.container}>
                 <FlatList
+                    onScroll={this.props.handleScroll}
+                    onScrollEndDrag={this.props.endDrag}
+                    onMomentumScrollEnd={this.props.onScrollEnd}
                     ListHeaderComponent={this._header}
                     data={currentComment_reviews}
                     renderItem={({item, index}) => (

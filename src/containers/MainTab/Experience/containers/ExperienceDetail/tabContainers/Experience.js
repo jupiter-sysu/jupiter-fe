@@ -23,104 +23,6 @@ class Experience extends Component {
         super(props);
         this.state = {
 
-            // 底部导航栏隐藏动画 透明度和距离参数
-            opacityAnima: new Animated.Value(1),
-            bottomAnima: new Animated.Value(0),
-
-            // 底部导航栏是否可见
-            bottomBarVisible: true,
-
-            // 点赞图标样式
-            heartName: 'ios-heart-outline',
-            heartColor: 'black',
-
-            // 收藏图标样式
-            starColor: 'black',
-            starName: 'ios-star-outline',
-        }
-        this.endDrag = this.endDrag.bind(this);
-        this.handleLike = this.handleLike.bind(this);
-        this.handleStar = this.handleStar.bind(this);
-    }
-
-    componentDidMount() {
-        // 请求资源
-        this.props.experience.loadExperiencePage();
-    }
-
-    // 用于处理滚动 隐藏显示导航栏
-    endDrag = (e) => {
-        this.props.experience.scrollY = e.nativeEvent.contentOffset.y
-    }
-
-    // 处理滚动时, 触发隐藏展示底部导航栏
-    handleScroll = (e) => {
-        if (this.state.bottomBarVisible && e.nativeEvent.contentOffset.y - this.props.experience.scrollY > 30) {
-            Animated.parallel([
-                Animated.timing(
-                    this.state.opacityAnima,
-                    {
-                        toValue: 0,
-                    }
-                ),
-                Animated.timing(
-                    this.state.bottomAnima,
-                    {
-                        toValue: -45 * PIXEL_RATE,
-                    }
-                )
-            ]).start();
-            this.setState({
-                bottomBarVisible: false
-            })
-        } else if (!this.state.bottomBarVisible && e.nativeEvent.contentOffset.y - this.props.experience.scrollY < -20) {
-            Animated.parallel([
-                Animated.timing(
-                    this.state.opacityAnima,
-                    {
-                        toValue: 1,
-                    }
-                ),
-                Animated.timing(
-                    this.state.bottomAnima,
-                    {
-                        toValue: 0 * PIXEL_RATE,
-                    }
-                )
-            ]).start();
-            this.setState({
-                bottomBarVisible: true
-            })
-        } 
-    }
-
-    // 处理点赞
-    handleLike() {
-        if (this.state.heartName == 'ios-heart') {
-            this.setState({
-                heartName: 'ios-heart-outline',
-                heartColor: 'black',
-            })
-        } else {
-            this.setState({
-                heartName: 'ios-heart',
-                heartColor: THEME_PRIMARY_COLOR,
-            })
-        }
-    }
-
-    // 处理收藏
-    handleStar() {
-        if (this.state.starName == 'ios-star') {
-            this.setState({
-                starName: 'ios-star-outline',
-                starColor: 'black',
-            })
-        } else {
-            this.setState({
-                starName: 'ios-star',
-                starColor: THEME_PRIMARY_COLOR,
-            })
         }
     }
 
@@ -156,17 +58,16 @@ class Experience extends Component {
 
             // 匹配到的地址 xxxxx 渲染图片
             Image.getSize(match[1], (sonWidth, sonHeight) => {
-                
-                console.log("sonwidth: " + sonWidth + " sonheig: " + sonHeight + " parentHeight : " + parentHeight)
+
             })
-            console.log(" parentHeight : " + parentHeight)
             body.push(
-                <Image 
-                    source={{ uri: match[1] }} 
-                    style={{ marginVertical: 17 * PIXEL_RATE_Y, 
-                            width: parentWidth, 
-                            height: parentHeight,
-                    }} 
+                <Image
+                    source={{ uri: match[1] }}
+                    style={{
+                        marginVertical: 17 * PIXEL_RATE_Y,
+                        width: parentWidth,
+                        height: parentHeight,
+                    }}
                     key={match[1]} />
             )
         }
@@ -174,23 +75,13 @@ class Experience extends Component {
     }
 
     render() {
-        if (this.props.experience.detailPageIniting == true) {
-            // 初始页面显示时,显示菊花图
-            return (
-                <View style={{justifyContent: 'center', alignContent: 'center',}}>
-                    <MCSpinner isVisible={this.props.experience.detailPageIniting} type="no-background" />
-                </View>
-            )
-        } else 
         return (
             // 请求数据到达后显示玩法页面
             <View style={styles.container}>
                 <ScrollView
-                    onScroll={this.handleScroll}
-                    onScrollEndDrag={this.endDrag}
-                    onMomentumScrollEnd={(e) => {
-                            this.props.experience.scrollY = e.nativeEvent.contentOffset.y;
-                    }}
+                    onScroll={this.props.handleScroll}
+                    onScrollEndDrag={this.props.endDrag}
+                    onMomentumScrollEnd={this.props.onScrollEnd}
                     scrollEventThrottle={16}
                     contentContainerStyle={{ alignItems: 'center'}}
                 >
@@ -302,50 +193,7 @@ class Experience extends Component {
                     </View>
                 </ScrollView>
 
-                {/* 底部导航栏 */}
-                <Animated.View style={[ styles.bottomBar, {opacity: this.state.opacityAnima, bottom: this.state.bottomAnima }]}>
-                    <TouchableOpacity 
-                        style={{marginLeft: 30 * PIXEL_RATE,}}
-                        onPress={() => {
-                            // this.props.navigation.goBack();
-                            let rever = !this.state.bottomBarVisible
-                            this.setState({
-                                bottomBarVisible: rever
-                            })
-                        }}
-                    >
-                        <Ionicons name='ios-arrow-back' size={25 * PIXEL_RATE} color={'black'}/>
-                    </TouchableOpacity>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between', marginRight: 20 * PIXEL_RATE,}} >
-                        <TouchableOpacity
-                            style={{marginHorizontal: 11 * PIXEL_RATE,}}
-                        >
-
-                            <Ionicons name="ios-create-outline" size={25 * PIXEL_RATE} color={'black'} />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={this.handleLike}
-                            style={{ marginHorizontal: 11 * PIXEL_RATE, }}
-                        >
-                            <Ionicons name={this.state.heartName} size={25 * PIXEL_RATE} color={this.state.heartColor} />
-                            <Text style={{ fontSize: 10, position: 'absolute', left: 20 * PIXEL_RATE, top: -5 * PIXEL_RATE, }}> 127 </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={this.handleStar}
-                            style={{ marginHorizontal: 11 * PIXEL_RATE, }}
-                        >
-                            <Ionicons name={this.state.starName} size={25 * PIXEL_RATE} color={this.state.starColor} />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => {
-                                console.log("like");
-                            }}
-                            style={{ marginHorizontal: 11 * PIXEL_RATE, }}
-                        >
-                            <Ionicons name="ios-share-outline" size={25 * PIXEL_RATE} color={'black'} />
-                        </TouchableOpacity>
-                    </View>
-                </Animated.View>
+                
             </View>
         )
     }
@@ -356,6 +204,7 @@ export default Experience;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        width: Dimensions.get('window').width,
         alignItems: 'center',
         backgroundColor: '#fff',
     },
