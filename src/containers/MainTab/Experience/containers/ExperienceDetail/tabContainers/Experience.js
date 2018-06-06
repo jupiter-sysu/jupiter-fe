@@ -87,46 +87,6 @@ class Experience extends Component {
                 >
                     {/* 封面页面 */}
                     <ImageBackground source={{ uri: this.props.experience.detail.cover_img }} style={styles.cover}>
-                        <View style={styles.Headercontainer}>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    this.props.navigation.goBack();
-                                }}
-                                style={styles.backIcon}
-                            >
-                                <Ionicons name='ios-arrow-back' size={20 * PIXEL_RATE} style={{ marginTop: 2, color: 'white', backgroundColor: 'rgba(0,0,0,0)' }} />
-                            </TouchableOpacity>
-                            <View style={styles.optionContainer}>
-                                <TouchableOpacity
-                                    activeOpacity={1}
-                                    onPress={() => {
-                                        this.props.experience.setCurrentTab(1);
-                                    }}
-                                    style={this.props.experience.currentTab === 1 ?
-                                    styles.activeTabButton
-                                    : styles.inactiveTabButton}
-                                >
-                                    <Text style={{
-                                        fontSize: 16,
-                                        color: "white",
-                                    }}>体验</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    activeOpacity={1}
-                                    onPress={() => {
-                                        this.props.experience.setCurrentTab(2);
-                                    }}
-                                    style={this.props.experience.currentTab === 2 ?
-                                    styles.activeTabButton
-                                    : styles.inactiveTabButton}
-                                >
-                                    <Text style={{
-                                        fontSize: 16,
-                                        color: "white",
-                                    }}>评论</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
                         <View style={styles.coverDetail}>
                             <Text style={styles.experienceTitle}>{this.props.experience.detail.experience_title}</Text>
                             <Text style={styles.description}>{this.props.experience.detail.experience_brief_decription}</Text>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Dimensions, StyleSheet, TouchableOpacity, ImageBackground, Image, ScrollView, Animated } from 'react-native';
+import { Text, View, Dimensions, StyleSheet, TouchableOpacity, ImageBackground, Image, ScrollView, Animated, StatusBar, TouchableHighlight } from 'react-native';
 import { inject, observer,  } from 'mobx-react';
 import styled from 'styled-components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -30,6 +30,9 @@ class ExperienceDetailTabContainer extends Component {
             opacityAnima: new Animated.Value(1),
             bottomAnima: new Animated.Value(0),
 
+            // 顶部导航栏滑动条动画参数
+            switchAnima: new Animated.Value(0),
+
             // 底部导航栏是否可见
             bottomBarVisible: true,
 
@@ -40,6 +43,9 @@ class ExperienceDetailTabContainer extends Component {
             // 收藏图标样式
             starColor: 'black',
             starName: 'ios-star-outline',
+
+            // 顶部切换到哪个页面
+            currentTab: 1,
         }
         this.endDrag = this.endDrag.bind(this);
         this.handleLike = this.handleLike.bind(this);
@@ -133,7 +139,40 @@ class ExperienceDetailTabContainer extends Component {
         }
     }
 
-   
+    switchToExperience = () => {
+        this._scrollView.scrollTo({ x: 0, animated: true });
+        this.setState({
+            currentTab: 1,
+        })
+    }
+    
+    switchToComment = () => {
+        this._scrollView.scrollTo({ x: Dimensions.get('window').width, animated: true })
+        this.setState({
+            currentTab: 2,
+        })
+    }
+
+    handleSwitchTab = (e) => {
+        let x = e.nativeEvent.contentOffset.x
+        tab = Math.round(x / Dimensions.get('window').width) + 1;
+        if (tab != this.state.currentTab) {
+            this.setState({
+                currentTab: tab,
+            })
+            console.log("currentTab: tab" + tab);
+        }
+    }
+
+    handleScrollSwitch = (e) => {
+        Animated.event([{
+            nativeEvent: {
+                contentOffset: {
+                    x: this.state.switchAnima
+                }
+            }
+        }])(e)
+    }
 
     render() {
         if (this.props.experience.detailPageIniting == true) {
@@ -143,10 +182,50 @@ class ExperienceDetailTabContainer extends Component {
                     <MCSpinner isVisible={this.props.experience.detailPageIniting} type="no-background" />
                 </View>
             )
-        } else
+        } else {
+            let interpolateLeft = this.state.switchAnima.interpolate({
+                inputRange: [0, Dimensions.get('window').width],
+                outputRange: [92 * PIXEL_RATE, 242 * PIXEL_RATE],
+                extrapolate: 'clamp'
+            })
             return (
                 <View style={styles.container}>
-                    <ScrollView horizontal='true' pagingEnabled='true'>
+                    <View style={styles.headerBar}>
+                        <StatusBar barStyle="dark-content" />
+                        <TouchableHighlight 
+                            style={styles.headerBarButton}
+                            onPress={this.switchToExperience}
+                            underlayColor="#f5f5f5"
+                            ref={(ref) => {
+                                this._firstButton = ref
+                            }}
+                        >
+                            <Text style={{ fontSize: 20, color: (this.state.currentTab==1?'black':'grey')}}>
+                                体验
+                            </Text>
+                        </TouchableHighlight>
+                        <TouchableHighlight
+                            style={styles.headerBarButton}
+                            onPress={this.switchToComment}
+                            underlayColor="#f5f5f5"
+                        >
+                            <Text style={{ fontSize: 20, color: (this.state.currentTab == 1 ? 'grey' : 'black')}}>
+                                点评
+                            </Text>
+                        </TouchableHighlight>
+
+                        {/* 滑动条 */}
+                        <Animated.View style={[styles.slider, {left: interpolateLeft}]} />
+                    </View>
+
+                    <ScrollView 
+                        horizontal='true' 
+                        pagingEnabled='true' 
+                        ref={(ref) => this._scrollView = ref}
+                        onMomentumScrollEnd={this.handleSwitchTab}
+                        onScroll={this.handleScrollSwitch}
+                        scrollEventThrottle={16}
+                    >
                         {/* 体验详情页 */}
                         <Experience 
                             handleScroll={this.handleScroll} 
@@ -206,8 +285,11 @@ class ExperienceDetailTabContainer extends Component {
                     </Animated.View>
                 </View>
             )
+        }
     }
 }
+
+const headerBarHeight = 35 * PIXEL_RATE_Y;
 
 const styles = StyleSheet.create({
     container: {
@@ -215,185 +297,44 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#fff',
     },
-    cover: {
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
-    },
-    Headercontainer: {
-        height: 32 * PIXEL_RATE,
-        width: Dimensions.get('window').width,
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row',
+    headerBar: {
         position: 'absolute',
-        top: 28 * PIXEL_RATE_Y,
-    },
-    backIcon: {
-        position: 'absolute',
-        left: 16 * PIXEL_RATE,
-        width: 40 * PIXEL_RATE,
-        alignItems: 'center',
-        height: 30 * PIXEL_RATE,
-    },
-    optionContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row',
-        marginLeft: 16 * PIXEL_RATE + 40 * PIXEL_RATE,
-        paddingRight: (16 * PIXEL_RATE + 40 * PIXEL_RATE) / 2,
-    },
-    activeTabButton: {
-        width: 75,
-        height: 36,
-        borderColor: 'white',
-        borderRadius: 20,
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginLeft: 5,
-        marginRight: 5,
-    },
-    inactiveTabButton: {
-        width: 75,
-        height: 36,
-        borderColor: 'white',
-        borderRadius: 20,
-        borderWidth: 0,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginLeft: 5,
-        marginRight: 5,
-    },
-    coverDetail: {
-        marginLeft: 21 * PIXEL_RATE,
-        marginTop: 448 * PIXEL_RATE_Y,
-    },
-    experienceTitle: {
-        color: 'white',
-        fontSize: 28,
-        marginTop: 10,
-    },
-    description: {
-        color: 'white',
-        fontSize: 14,
-        marginTop: 3,
-    },
-    autor: {
-        color: 'white',
-        fontSize: 14,
-        marginTop: 20,
-    },
-    tagsContainer: {
-        marginTop: 20,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        width: '100%',
-        paddingHorizontal: 5,
-    },
-    tags: {
-        margin: 4,
-        fontSize: 12,
-        paddingVertical: 8,
-        paddingHorizontal: 13,
-        borderWidth: StyleSheet.hairlineWidth,
-        borderRadius: 16,
-        borderColor: 'rgba(187, 187, 187, 1)',
-    },
-    title: {
-        marginLeft: 25,
-        fontSize: 18,
-        marginVertical: 20,
-    },
-    recomendDetail: {
-        marginRight: 33 * PIXEL_RATE,
-        marginLeft: 42 * PIXEL_RATE,
-        flexDirection: 'row',
-    },
-    autorProfile: {
-        width: 49 * PIXEL_RATE,
-        height: 49 * PIXEL_RATE,
-        borderRadius: 24.5 * PIXEL_RATE,
-    },
-    context: {
-        fontSize: 14,
-        lineHeight: 25,
-    },
-    seperator: {
-        borderWidth: StyleSheet.hairlineWidth,
-        opacity: 0.38,
-        marginLeft: 30,
-        marginRight: 30,
-        marginTop: 30,
-    },
-    introduction: {
-
-    },
-    introductionImage: {
-        width: 375 * PIXEL_RATE,
-        height: 238 * PIXEL_RATE,
-    },
-    foldOrExpand: {
-        flexDirection: 'row',
-        marginRight: 35,
-    },
-    nearbyExperience: {
+        paddingTop: 20 * PIXEL_RATE_Y,
+        top: 0,
+        zIndex: 3,
         width: Dimensions.get('window').width,
-        backgroundColor: '#f5f5f5',
-        justifyContent: 'center',
-        alignContent: 'center',
-        marginBottom: 45 * PIXEL_RATE,
-    },
-    nearbyHeader: {
+        height: 20 * PIXEL_RATE_Y + headerBarHeight,
+        backgroundColor: 'white',
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        justifyContent: 'center',
         alignItems: 'center',
     },
-    nearbyContext: {
-        marginTop: 8 * PIXEL_RATE,
-        marginHorizontal: 11 * PIXEL_RATE,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between'
+    headerBarButton: {
+        width: Dimensions.get('window').width / 2 * 0.8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: headerBarHeight,
     },
     bottomBar: {
         width: Dimensions.get('window').width,
-        height: 45 * PIXEL_RATE,
+        height: 45 * PIXEL_RATE_Y,
         backgroundColor: 'white',
         position: 'absolute',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+    },
+    slider: {
+        width: 40 * PIXEL_RATE,
+        height: 5 * PIXEL_RATE_Y,
+        backgroundColor: THEME_PRIMARY_COLOR,
+        position: 'absolute',
+        bottom: 0,
+        
     }
 
 });
-// class ExperienceDetailTabContainer extends Component {
-
-//     componentDidMount() {
-//         // 请求资源
-        
-//     }
-
-//     render() {
-//         return (
-//             <View style={styles.container}>
-//                 {this.props.experience.currentTab === 1 ? 
-//                     <Experience navigation={this.props.navigation}/>
-//                     : <Comments navigation={this.props.navigation}/> }
-//             </View>
-//         )
-//     }
-// }
 
 export default ExperienceDetailTabContainer;
 
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         backgroundColor: '#f5f5f5',
-//         justifyContent: 'center',
-//         alignItems: 'center'
-//     },
-
-// });
 
