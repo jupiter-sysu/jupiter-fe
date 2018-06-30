@@ -30,11 +30,11 @@ const COLOR = [
 const PIXEL_RATE = Dimensions.get('screen').width / 375;
 
 const Category = ({
-  id, photo, category, index,
+  feature_id, photo, category, index,
 }) => (
   <TouchableOpacity
     activeOpacity={1}
-    onPress={() => console.log(id)}
+    onPress={() => console.log(feature_id)}
     style={styles.itemContainer}
   >
     <View style={{

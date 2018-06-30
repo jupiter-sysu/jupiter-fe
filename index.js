@@ -8,7 +8,7 @@ import Router from './Router';
 
 import stores from './src/store';
 
-// To see all the requests in the chrome Dev tools in the network tab.
+// // To see all the requests in the chrome Dev tools in the network tab.
 // XMLHttpRequest = GLOBAL.originalXMLHttpRequest ?
 //   GLOBAL.originalXMLHttpRequest :
 //   GLOBAL.XMLHttpRequest;
