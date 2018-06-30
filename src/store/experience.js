@@ -193,6 +193,11 @@ class experienceSotre {
         }
     }
 
+    @action.bound
+    setScrollY(Y) {
+        this.scrollY = Y;
+    }
+
 
 
 
