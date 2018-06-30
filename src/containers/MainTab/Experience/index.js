@@ -190,7 +190,7 @@ class Experience extends Component {
                 autoFocus={true}
                 style={{
                   backgroundColor: '#FFFFFF',
-                  size: 14,
+                  fontSize: 14,
                   paddingLeft: 10,
                   width: 312,
                   height: 34,
@@ -351,7 +351,7 @@ class Experience extends Component {
              waitForInteraction: true,
           }}
          onViewableItemsChanged={this._onViewableItemsChanged}
-				 renderSectionHeader={({ section: { title, subtitle, photo, id } }) => (
+         renderSectionHeader={({ section: { title, subtitle, city_img, city_id } }) => (
            <View>
              <View style={{ flexDirection: 'row', paddingLeft: 10, marginBottom: 4 }}>
                <View style={{ flex: 1 }}>
@@ -363,19 +363,19 @@ class Experience extends Component {
                {subtitle === undefined ?
                  <TouchableOpacity 
                     style={{ justifyContent: 'center' }}
-                    onPress={() => console.log(id)}
+                    onPress={() => console.log(city_id)}
                  >
                    <Text style={{ marginRight: 14, fontSize: 14 }}>更多 ></Text>
                  </TouchableOpacity>
                  : null}
              </View>
-             {photo !== undefined ?
+             {city_img !== undefined ?
                <TouchableOpacity 
                   style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 10 }} 
                   activeOpacity={1}
-                  onPress={() => console.log(id) }
+                 onPress={() => console.log(city_id) }
                >
-                 <Image source={{ uri: photo }} style={styles.cityPic} />
+                 <Image source={{ uri: city_img }} style={styles.cityPic} />
                </TouchableOpacity>
                : null}
            </View>

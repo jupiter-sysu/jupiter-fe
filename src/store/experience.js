@@ -13,6 +13,7 @@ class experienceSotre {
     @observable currentData = null;
     @observable showOriginalSearchBar = true;
     @observable currentExperienceID = '';
+    @observable totalPage = 1;
 
     @observable modalVisible = false;
     @observable searchValue = '';
@@ -80,29 +81,33 @@ class experienceSotre {
 
     @action.bound
     async loadPage() {
-        if (this.currentPage === 1) {
-            this.isIniting = true;
-        }
-        try {
-            const { data } = await sPost('https://dsn.apizza.net/mock/d219e15359947f0ce7411b7b91fd5668/experience/homepage', { 
-                page: this.currentPage 
-            });
+        if (this.currentPage <= this.totalPage) {
             if (this.currentPage === 1) {
-                this.headerPhoto = data.experience_photo;
-                this.currentData = data;
-            } else {
-                const city = data.city;
-                let prevCity = this.currentData.city.slice();
-                console.log(prevCity, city);
-                let newCity = prevCity.concat(city);
-                this.currentData.city = newCity;
+                this.isIniting = true;
             }
-            this.currentPage = this.currentPage + 1;
-            console.log(data);
-        } catch(err) {
-            Toast.info(err.message, 2);
-        } finally {
-            this.isIniting = false;
+            try {
+                const { data } = await sPost('/experience/homepage/', {
+                    page: this.currentPage
+                });
+                console.log(data);
+                if (this.currentPage === 1) {
+                    this.headerPhoto = data.cover_img;
+                    this.totalPage = data.page_sum;
+                    this.currentData = data;
+                } else {
+                    const city = data.city;
+                    let prevCity = this.currentData.city.slice();
+                    console.log(prevCity, city);
+                    let newCity = prevCity.concat(city);
+                    this.currentData.city = newCity;
+                }
+                this.currentPage = this.currentPage + 1;
+                console.log(data);
+            } catch (err) {
+                Toast.info(err.message, 2);
+            } finally {
+                this.isIniting = false;
+            }
         }
     }
 
@@ -153,11 +158,11 @@ class experienceSotre {
             data: [items],
             ...others
         });
-        console.log(this.currentData.city, '?')
-        this.currentData.city.map((city, index) => {
-            const { name, items, ...others } = city;
+        console.log(this.currentData.city.slice(), '?')
+        this.currentData.city.slice().forEach((city, index) => {
+            const { city_name, items, ...others } = city;
             result.push({
-                title: name,
+                title: city_name,
                 data: [items],
                 ...others
             });

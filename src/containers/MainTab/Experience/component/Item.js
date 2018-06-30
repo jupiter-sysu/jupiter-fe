@@ -31,27 +31,29 @@ const OverflowText = styled.Text`
 const PIXEL_RATE = Dimensions.get('screen').width / 375;
 
 const Item = ({
-  title, description, name, photo, id, navigation, experience,
-}) => (
+  experience_title, experience_brief_decription, experience_feature3, card_img, experience_id, navigation, experience,
+}) => {
+  console.log(card_img);
+  return (
   <TouchableOpacity
     activeOpacity={1}
     onPress={() => {
       experience.setCurrentTab(1);
-      experience.setCurrentExperienceID(id);
+      experience.setCurrentExperienceID(experience_id);
       navigation.navigate('experienceDetail');
     }}
     style={styles.itemContainer}
   >
-    <OverflowText>{name}</OverflowText>
+    <OverflowText>{experience_feature3}</OverflowText>
     <Image
-      source={{ uri: photo }}
+      source={{ uri: card_img }}
       style={styles.itemPic}
       defaultSource={require('../../../../app-assets/loading/loading.16.9.png')}
     />
-    <ItemTitle>{title}</ItemTitle>
-    <ItemSubtitle>{description}</ItemSubtitle>
+    <ItemTitle>{experience_title}</ItemTitle>
+    <ItemSubtitle>{experience_brief_decription}</ItemSubtitle>
   </TouchableOpacity>
-);
+)};
 
 const styles = StyleSheet.create({
   itemContainer: {
