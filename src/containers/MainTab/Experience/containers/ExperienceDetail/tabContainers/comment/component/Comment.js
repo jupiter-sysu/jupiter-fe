@@ -4,6 +4,7 @@ import { observer, inject } from 'mobx-react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styled from 'styled-components';
 
+import MCPhoto from '../../../../../../../../component/Photo/MCPhoto';
 
 const PIXEL_RATE = Dimensions.get('screen').width / 375;
 const PIXEL_RATE_Y = Dimensions.get('screen').height / 667;
@@ -21,11 +22,12 @@ const Comment = ({
                 experience.setCommentID(id);
                 navigation.navigate('commentdetail');
             }}
+            activeOpacity={0.9}
         >
             <View>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.name}>{name}</Text>
-                    <Text style={styles.date}>{date}</Text>
+                    <Text style={styles.date}>{date.slice(0, date.indexOf(' '))}</Text>
                 </View>
                 <View style={{marginLeft: 20 * PIXEL_RATE, flexDirection: 'row'}}>
                     <Ionicons name="ios-star" size={15 * PIXEL_RATE} style={{color: '#101010'}}/>
@@ -53,23 +55,11 @@ const Comment = ({
                 >
                 {
                     photo.length === 1 ?
-                    <TouchableOpacity
-                        onPress={(e) => console.log(e.nativeEvent)}
-                    >
-                    <Image
-                        style={styles.image_big}
-                        source={{uri: photo[0]}}
-                    />
-                    </TouchableOpacity>
+                    <MCPhoto style={styles.image_big} uri={photo[0]} />
                     :
                     photo.map((p) => {
                         return (
-                        <TouchableOpacity>
-                            <Image 
-                                style={styles.image_little}
-                                source={{uri: p}}
-                            />
-                        </TouchableOpacity>
+                        <MCPhoto style={styles.image_little} uri={p} containerStyle={styles.photoContainer} />
                         )
                     }) 
                 }
@@ -153,11 +143,12 @@ const styles = StyleSheet.create({
     marginTop: 15 * PIXEL_RATE, 
     fontSize: 16 * PIXEL_RATE, 
     color: '#101010', 
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    flex: 1,
   },
   date: {
       marginTop: 14 * PIXEL_RATE_Y,
-      marginLeft: 155 * PIXEL_RATE,
+      width: 80 * PIXEL_RATE_Y,
       fontSize: 12 * PIXEL_RATE,
       color: '#101010'
   },
@@ -177,7 +168,7 @@ const styles = StyleSheet.create({
       width: 276 * PIXEL_RATE,
       flexDirection: 'row',
       flexWrap: 'wrap',
-      justifyContent: 'space-between'
+    //   justifyContent: 'space-between'
   },
   image_little: {
       width: 86 * PIXEL_RATE,
@@ -193,7 +184,10 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
         marginLeft: 219 * PIXEL_RATE,
         marginTop: 2 * PIXEL_RATE_Y
-  }
+  },
+    photoContainer: {
+        marginRight: 20 * PIXEL_RATE,
+    }
 });
 
 export default inject(stores=> ({

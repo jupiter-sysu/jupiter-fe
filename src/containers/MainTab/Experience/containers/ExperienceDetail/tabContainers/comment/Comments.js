@@ -45,6 +45,7 @@ class Comments extends Component {
         return (
             <View style={styles.container}>
                 <FlatList
+                    style={{ backgroundColor: '#F5F5F5' }}
                     onScroll={this.props.handleScroll}
                     onScrollEndDrag={this.props.endDrag}
                     onMomentumScrollEnd={this.props.onScrollEnd}

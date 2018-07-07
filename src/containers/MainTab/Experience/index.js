@@ -105,6 +105,7 @@ class Experience extends Component {
   })();
 
    render() {
+     console.log(this.props.experience.searchResultArray, 'hi');
      let interpolatedColor = this.state.animatedValue.interpolate({
        inputRange: [0, 100 * PIXEL_RATE],
        outputRange: ['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 1)'],
@@ -175,6 +176,7 @@ class Experience extends Component {
            <View style={styles.modalHeaderContainer}>
               <TouchableOpacity onPress={() => {
                 this.props.experience.setModalVisible(false);
+                this.props.experience.clearSearchData();
               }}>
                  <Ionicons name='ios-arrow-back' size={30 * PIXEL_RATE} style={{marginTop: 2, marginRight: 10, color: 'black', backgroundColor: 'rgba(0,0,0,0)'}} />
               </TouchableOpacity>
@@ -199,9 +201,10 @@ class Experience extends Component {
               />
            </View>
            <FlatList
+            keyboardShouldPersistTaps={true}
+            keyboardDismissMode='on-drag'
             ListFooterComponent={() => {
-              console.log(this.props.experience.searchHistory.slice());
-              if (this.props.experience.searchHistory.slice().length !== 0) {
+               if (this.props.experience.searchResultArray.length === 0 && this.props.experience.searchHistory.length !== 0) {
                 return (
                   <TouchableOpacity 
                     onPress={() => {
@@ -224,21 +227,109 @@ class Experience extends Component {
               }
               return null;
             }}
-            data={this.props.experience.searchHistory}
-            renderItem={({item}) => (
-              <TouchableOpacity style={{
-                width: '100%',
-                height: 50,
-                justifyContent: 'center',
-                paddingLeft: 30,
-                borderBottomWidth: 1,
-                borderColor: '#F8F8F8',
-              }}>
-                <Text style={{
-                  fontSize: 16,
-                }}>{item.name}</Text>
-              </TouchableOpacity>
-          )}
+            data={this.props.experience.searchResultArray.length !== 0 ? this.props.experience.searchResultArray : this.props.experience.searchHistory}
+            renderItem={({item}) => {
+              if (this.props.experience.searchResultArray.length !== 0) {
+                switch(item.type) {
+                  case '体验': {
+                    return (
+                      <TouchableOpacity 
+                        onPress={() => { this.props.experience.setCurrentExperienceID(item.experience_id); this.props.experience.setModalVisible(false); this.props.navigation.navigate('experienceDetail')}}
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                          paddingLeft: 30,
+                          borderBottomWidth: 1,
+                          borderColor: '#F8F8F8',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
+                        <Text style={{
+                          fontSize: 16,
+                          flex: 1,
+                        }}>{item.data.experience_title}</Text>
+                        <Text style={{
+                          fontSize: 14,
+                          width: 50,
+                          color: '#CCC'
+                        }}>{item.type}</Text>
+                      </TouchableOpacity>
+                    )
+                  }
+                  case '国家': {
+                    return (
+                      <TouchableOpacity 
+                        onPress={() => alert(item.data.country_id)}
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                          paddingLeft: 30,
+                          borderBottomWidth: 1,
+                          borderColor: '#F8F8F8',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
+                        <Text style={{
+                          fontSize: 16,
+                          flex: 1,
+                        }}>{item.data.country_name}</Text>
+                        <Text style={{
+                          fontSize: 14,
+                          width: 50,
+                          color: '#CCC',
+                        }}>{item.type}</Text>
+                      </TouchableOpacity>
+                    )
+                  }
+                  case '城市':{
+                    return (
+                      <TouchableOpacity
+                        onPress={() => alert(item.data.city_id)}
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                          paddingLeft: 30,
+                          borderBottomWidth: 1,
+                          borderColor: '#F8F8F8',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
+                        <Text style={{
+                          fontSize: 16,
+                          flex: 1,
+                        }}>{item.data.city_name}</Text>
+                        <Text style={{
+                          fontSize: 14,
+                          width: 50,
+                          color: '#CCC'
+                        }}>{item.type}</Text>
+                      </TouchableOpacity>
+                    )
+                  }
+                  default:
+                    break;
+                }
+              } else {
+                console.log(item, '?');
+                return (
+                  <TouchableOpacity style={{
+                    width: '100%',
+                    height: 50,
+                    justifyContent: 'center',
+                    paddingLeft: 30,
+                    borderBottomWidth: 1,
+                    borderColor: '#F8F8F8',
+                  }}>
+                    <Text style={{
+                      fontSize: 16,
+                    }}>{item.name}</Text>
+                  </TouchableOpacity>
+                )
+              }
+          }}
            />
         </Modal>
        <Animated.View style={{

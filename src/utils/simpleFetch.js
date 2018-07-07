@@ -29,12 +29,12 @@ function myFetch(url, data) {
     ]);
 
     postPromise.then((res) => {
-      if (res && res.status === 200) {
+      if (res && res.status == 200) {
         return res.json();
       }
       throw new Error('server error');
     }).then((res) => {
-      if (res.code === 200 && res.enmsg === 'ok') {
+      if (res.code == 200 && res.enmsg === 'ok') {
         resolve(res);
       } else if (res.code === 401) {
         // log out
@@ -72,14 +72,14 @@ function simpleFetch(url, data) {
       body,
     })
       .then((res) => {
-        if (res && res.status === 200) {
+        if (res && res.status == 200) {
           return res.json();
         }
         throw new Error('server error');
       })
       .then((res) => {
         console.log(res);
-        if (res.code === 200 && res.enmsg === 'ok') {
+        if (res.code == 200 && res.enmsg === 'ok') {
           resolve(res);
         } else if (res.code === 401) {
           // log out

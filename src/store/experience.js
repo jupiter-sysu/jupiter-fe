@@ -19,6 +19,11 @@ class experienceSotre {
     @observable searchValue = '';
     @observable searchHistory=[];
     @observable currentTab = 1;
+    @observable currentSearchResult = {
+        country: [],
+        city: [],
+        experience: [],
+    };
 
     @observable isLike = false;
     @observable commentID = 0;
@@ -39,8 +44,41 @@ class experienceSotre {
     }
 
     @action.bound
-    changeSearchValue(value) {
+    clearSearchData() {
+        this.currentSearchResult = {
+            country: [],
+            city: [],
+            experience: [],
+        };
+    }
+
+    @action.bound
+    async changeSearchValue(value) {
         this.searchValue = value;
+        if (value) {
+            try {
+                const { data } = await sPost('/search/', {
+                    type: 1,
+                    search: value,
+                });
+                const result = await sPost('/search/', {
+                    type: 2,
+                    search: value,
+                });
+                this.currentSearchResult.experience = result.data.experience;
+                this.currentSearchResult.country = data.country;
+                this.currentSearchResult.city = data.city;
+                console.log(this.currentSearchResult, 'result');
+            } catch (err) {
+                Toast.info(err.message, 2);
+            }
+        } else {
+            this.currentSearchResult.country = [];
+            this.currentSearchResult.city = [];
+            this.currentSearchResult.experience = [];
+
+        }
+        
     }
 
     @action.bound
@@ -89,9 +127,8 @@ class experienceSotre {
                 const { data } = await sPost('/experience/homepage/', {
                     page: this.currentPage
                 });
-                console.log(data);
                 if (this.currentPage === 1) {
-                    this.headerPhoto = data.cover_img;
+                    this.headerPhoto = 'http://p9alq612u.bkt.clouddn.com/20180524172337774.png';
                     this.totalPage = data.page_sum;
                     this.currentData = data;
                 } else {
@@ -115,7 +152,10 @@ class experienceSotre {
     async loadComment() {
         this.isCommentIniting = true;
         try{
-            const { data } = await sPost('https://dsn.apizza.net/mock/d219e15359947f0ce7411b7b91fd5668/experience/review');
+            const { data } = await sPost('/experience/review/', {
+                experience_id: this.currentExperienceID,
+                page_num: 1,
+            });
             console.log(data);
             this.currentComment = data;
             this.currentComment_reviews = data.reviews;
@@ -131,7 +171,10 @@ class experienceSotre {
     async loadCommentReview() {
         this.isCommentReviewIniting = true;
         try{
-            const { data } = await sPost('https://dsn.apizza.net/mock/d219e15359947f0ce7411b7b91fd5668/experience/review/comment_detail');
+            const { data } = await sPost('/experience/review/detail/', {
+                review_id: this.commentID,
+                page_num:  1
+            });
             console.log(data);
             this.currentCommentReview = data;
         }catch(err){
@@ -181,7 +224,7 @@ class experienceSotre {
     async loadExperiencePage() {
         this.detailPageIniting = true;
         try {
-            const {data} = await sPost('https://dsn.apizza.net/mock/d219e15359947f0ce7411b7b91fd5668/experience/detail', {
+            const {data} = await sPost('/experience/detail/', {
                 experience_id: this.currentExperienceID
             });
             this.detail = data;
@@ -198,8 +241,25 @@ class experienceSotre {
         this.scrollY = Y;
     }
 
-
-
+    @computed
+    get searchResultArray() {
+        let result = [];
+        this.currentSearchResult.experience.forEach((item) => {
+            result.push({ data: item, type: '体验'});
+        });
+        this.currentSearchResult.country.forEach((item) => {
+            result.push({ data: item, type: '国家' });
+        });
+        this.currentSearchResult.city.forEach((item) => {
+            result.push({ data: item, type: '城市' });
+        });
+        // console.log(result, result.length, this.searchHistory);
+        // if (result.length === 0) {
+        //     console.log(this.searchHistory.slice(), 'enter');
+        //     return this.searchHistory.slice();
+        // }
+        return result;
+    }
 
 
 

@@ -87,6 +87,10 @@ class Experience extends Component {
                 >
                     {/* 封面页面 */}
                     <ImageBackground source={{ uri: this.props.experience.detail.cover_img }} style={styles.cover}>
+                        <Image
+                            source={require('../../../../../../app-assets/mask.png')}
+                            style={styles.mask}
+                        />
                         <View style={styles.coverDetail}>
                             <Text style={styles.experienceTitle}>{this.props.experience.detail.experience_title}</Text>
                             <Text style={styles.description}>{this.props.experience.detail.experience_brief_decription}</Text>
@@ -317,6 +321,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+    },
+    mask: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
     }
 
 });
